@@ -20,7 +20,7 @@ void run_mlp(){
   ctx.eval();
 
   int pred_label = *(pred_tensor->read<int>(0, 0));
-  printf("Predicted label: %d", pred_label);
+  printf("Predicted label: %d\r\n", pred_label);
 
 }
 
