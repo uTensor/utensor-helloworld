@@ -6,37 +6,6 @@
   
   The project current consists of:
  
-### Offline Tool
-  
-  - TensorFlow to uTensor exporter ([utensor-cli](https://github.com/uTensor/utensor_cgen))
-
-### Mbed Runtime Library
-
-  - Tensor Classes
-  	- Data Holder
-  	- Virtual Memory 
-  - Operators Classes
-   - C reference implementation
-   - Basic operators: MatMal, Add, ReLu, Reshape, Max, Min, ArgMax, Quantization Ops, etc
-  - Context Class
-   - A resource management class
-   - An interface to utensor-cli's code generation
-   - Describes a graph
-
-  This project is under going constant development. APIs are expected to update rapidly.
-  
-## Overview
-  This document contains the steps you would need to build an uTensor application from ground-up. The application implements a simple 3-layer MLP trained for the MNIST dataset, a hand-written digit recognizer. The example repository created using steps presented below can be found [HERE](https://github.com/neil-tan/utensor-helloworld).
-  
-Topics to be covered:
-  
-  - Setting up a Mbed project with uTensor
-  - Convert a quantized graph to C++ code
-  - Add main.cpp to perform inference
-  - Running on device
-
-  We are working to release an Mbed-online-Simulator version of the example. Stay-tuned!
-
 ## Requirement
 
 - [Mbed CLI](https://github.com/ARMmbed/mbed-cli)
