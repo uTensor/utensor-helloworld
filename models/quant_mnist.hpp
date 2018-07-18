@@ -4,4 +4,5 @@
 #define __MODELS_QUANT_MNIST_H
 #include "context.hpp"
 void get_quant_mnist_ctx(Context& ctx, Tensor* input_0);
+void get_quant_mnist_ctx_s(Context& ctx);
 #endif // __MODELS_QUANT_MNIST_H

@@ -181,6 +181,8 @@ void get_quant_mnist_ctx(Context& ctx, Tensor* input_0) {
              { "Layer1/Relu_eightbit_quantized:0", "Layer1/Relu_eightbit_quantized:1", "Layer1/Relu_eightbit_quantized:2" });
     ctx.eval();
 }
+}
+void get_quant_mnist_ctx_s(Context& ctx) {
 {
     TensorIdxImporter t_import;
     ctx.add(t_import.ubyte_import("/fs/constants/quant_mnist/Layer2_Variable_quint8_const_0.idx"),
@@ -301,6 +303,7 @@ void get_quant_mnist_ctx(Context& ctx, Tensor* input_0) {
              { "Layer2/Relu_eightbit_quantized:0", "Layer2/Relu_eightbit_quantized:1", "Layer2/Relu_eightbit_quantized:2" });
     ctx.eval();
 }
+
 {
     TensorIdxImporter t_import;
     ctx.add(t_import.ubyte_import("/fs/constants/quant_mnist/OuputLayer_Variable_quint8_const_0.idx"),

@@ -16,11 +16,12 @@ void run_mlp(){
   Context ctx;
 
   get_quant_mnist_ctx(ctx, input_x);
+  get_quant_mnist_ctx_s(ctx);
   S_TENSOR pred_tensor = ctx.get("y_pred:0");
   ctx.eval();
 
   int pred_label = *(pred_tensor->read<int>(0, 0));
-  printf("Predicted label: %d", pred_label);
+  printf("Predicted label: %d\r\n", pred_label);
 
 }
 

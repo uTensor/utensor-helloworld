@@ -40,5 +40,9 @@
             "sd-clk": "D13",
             "sd-cs": "D9"
         }
-    }
+	},
+		"macros": [
+			"MBED_CONF_APP_MAIN_STACK_SIZE=8192"
+		]
+				
 }
