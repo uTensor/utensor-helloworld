@@ -1,40 +1,24 @@
-#include "quant_mnist.hpp"
-#include "tensorIdxImporter.hpp"
-#include "tensor.hpp"
-#include "FATFileSystem.h"
-#include "SDBlockDevice.h"
+#include "models/deep_mlp.hpp"  //gernerated model file
+#include "tensor.hpp"  //useful tensor classes
 #include "mbed.h"
+#include <stdio.h>
+#include "input_data.h"  //contains the first sample taken from the MNIST test set
 
-Serial pc(USBTX, USBRX, 115200);
-SDBlockDevice bd(MBED_CONF_APP_SD_MOSI, MBED_CONF_APP_SD_MISO,
-                 MBED_CONF_APP_SD_CLK, MBED_CONF_APP_SD_CS);
-FATFileSystem fs("fs");
-
-void run_mlp(){
-  TensorIdxImporter t_import;
-  Tensor* input_x = t_import.float_import("/fs/tmp.idx");
-  Context ctx;
-
-  get_quant_mnist_ctx(ctx, input_x);
-  S_TENSOR pred_tensor = ctx.get("y_pred:0");
-  ctx.eval();
-
-  int pred_label = *(pred_tensor->read<int>(0, 0));
-  printf("Predicted label: %d\r\n", pred_label);
-
-}
+Serial pc(USBTX, USBRX, 115200);  //baudrate := 115200
 
 int main(void) {
   printf("Simple MNIST end-to-end uTensor cli example (device)\n");
-  
-  ON_ERR(bd.init(), "SDBlockDevice init ");
-  ON_ERR(fs.mount(&bd), "Mounting the filesystem on \"/fs\". ");
 
-  init_env();
-  run_mlp();
-  
-  ON_ERR(fs.unmount(), "fs unmount ");
-  ON_ERR(bd.deinit(), "SDBlockDevice de-init ");
+  Context ctx;  //creating the context class, the stage where inferences take place 
+  //wrapping the input data in a tensor class
+  Tensor* input_x = new WrappedRamTensor<float>({1, 784}, (float*) input_data);
+
+  get_deep_mlp_ctx(ctx, input_x);  // pass the tensor to the context
+  S_TENSOR pred_tensor = ctx.get("y_pred:0");  // getting a reference to the output tensor
+  ctx.eval(); //trigger the inference
+
+  int pred_label = *(pred_tensor->read<int>(0, 0));  //getting the result back
+  printf("Predicted label: %d\r\n", pred_label);
 
   return 0;
 }
