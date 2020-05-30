@@ -1,24 +1,57 @@
-#include "models/deep_mlp.hpp"  //gernerated model file
-#include "tensor.hpp"  //useful tensor classes
+#include "models/my_model/my_model.hpp"  //gernerated model file"
+#include "uTensor/src/uTensor.h"
+#include <cmath>
+#include <iostream>
 #include "mbed.h"
 #include <stdio.h>
-#include "input_data.h"  //contains the first sample taken from the MNIST test set
+#include "input_image.h"  //contains the first sample taken from the MNIST test set
+
+using namespace uTensor;
+
+void onError(Error* err) {
+  while (true) {
+  }
+}
+
+int argmax(const Tensor& logits) {
+  uint32_t num_elems = logits->num_elems();
+  float max_value = static_cast<float>(logits(0));
+  int max_index = 0;
+  for (int i = 1; i < num_elems; ++i) {
+    float value = static_cast<float>(logits(i));
+    if (value >= max_value) {
+      max_value = value;
+      max_index = i;
+    }
+  }
+  return max_index;
+}
 
 Serial pc(USBTX, USBRX, 115200);  //baudrate := 115200
 
 int main(void) {
   printf("Simple MNIST end-to-end uTensor cli example (device)\n");
 
-  Context ctx;  //creating the context class, the stage where inferences take place 
-  //wrapping the input data in a tensor class
-  Tensor* input_x = new WrappedRamTensor<float>({1, 784}, (float*) input_data);
+  localCircularArenaAllocator<2048> meta_allocator;
+  localCircularArenaAllocator<40000, uint32_t> ram_allocator;
+  SimpleErrorHandler mErrHandler(10);
 
-  get_deep_mlp_ctx(ctx, input_x);  // pass the tensor to the context
-  S_TENSOR pred_tensor = ctx.get("y_pred:0");  // getting a reference to the output tensor
-  ctx.eval(); //trigger the inference
+  mErrHandler.set_onError(onError);
+  Context::get_default_context()->set_metadata_allocator(&meta_allocator);
+  Context::get_default_context()->set_ram_data_allocator(&ram_allocator);
+  Context::get_default_context()->set_ErrorHandler(&mErrHandler);
+  float correct_cnt = 0.0;
+  
+  // create the input/output tensor
+  Tensor input_image = new RomTensor({1, 28, 28, 1}, flt, arr_input_image);
+  Tensor logits = new RamTensor({1, 10}, flt);
 
-  int pred_label = *(pred_tensor->read<int>(0, 0));  //getting the result back
-  printf("Predicted label: %d\r\n", pred_label);
+  compute_my_model(input_image, logits);
+  int max_index = argmax(logits);
+  input_image.free();
+  logits.free();
+  
+  printf("pred label: %d\r\n", max_index);
 
   return 0;
 }
