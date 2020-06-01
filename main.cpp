@@ -28,13 +28,13 @@ int argmax(const Tensor& logits) {
 }
 
 Serial pc(USBTX, USBRX, 115200);  //baudrate := 115200
+localCircularArenaAllocator<estimated_meta_usage> meta_allocator;
+localCircularArenaAllocator<estimated_ram_usage, uint32_t> ram_allocator;
+SimpleErrorHandler mErrHandler(10);
 
 int main(void) {
   printf("Simple MNIST end-to-end uTensor cli example (device)\n");
 
-  localCircularArenaAllocator<estimated_meta_usage> meta_allocator;
-  localCircularArenaAllocator<estimated_ram_usage, uint32_t> ram_allocator;
-  SimpleErrorHandler mErrHandler(10);
 
   mErrHandler.set_onError(onError);
   Context::get_default_context()->set_metadata_allocator(&meta_allocator);
