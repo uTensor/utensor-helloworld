@@ -32,8 +32,8 @@ Serial pc(USBTX, USBRX, 115200);  //baudrate := 115200
 int main(void) {
   printf("Simple MNIST end-to-end uTensor cli example (device)\n");
 
-  localCircularArenaAllocator<2048> meta_allocator;
-  localCircularArenaAllocator<40000, uint32_t> ram_allocator;
+  localCircularArenaAllocator<estimated_meta_usage> meta_allocator;
+  localCircularArenaAllocator<estimated_ram_usage, uint32_t> ram_allocator;
   SimpleErrorHandler mErrHandler(10);
 
   mErrHandler.set_onError(onError);
