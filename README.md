@@ -10,7 +10,7 @@ In a Python virtual environment, install the following:
 
 ### Training and Code Generation
 Run `deep_mlp.ipynb` in Jupyter-notebook.
-Running the notebook should replace the pre-generated files in teh repository.
+Running the notebook should replace the pre-generated files in the repository.
 
 ### Compile
 ```
