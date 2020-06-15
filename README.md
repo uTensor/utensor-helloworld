@@ -1,10 +1,10 @@
 # uTensor Hello World Repository (Preview)
 This is a quick end-to-end, training-to-deployment, uTensor tutorial.
-The [K64F](https://os.mbed.com/platforms/FRDM-K64F/) is used in this tutorial. However, any Mbed enabled board should work.
+Although, the [K64F](https://os.mbed.com/platforms/FRDM-K64F/) is used in this tutorial, any Mbed enabled board should work.
 
 This is a project **PREVIEW**. More updates and tutorials will be released. Please give us your feedback in the mean time.
 
-## What's New with uTensor Re-Arch
+## What's New with uTensor
 - TF2 Support
 - One-line Exporter API
 - Improved Inference API
@@ -51,7 +51,7 @@ git clone https://github.com/uTensor/utensor-helloworld.git
 ```
 
 ## Training and Code Generation
-The sample project should already include the generated code and is ready to be compiled. The [mnist_conv.ipynb](https://github.com/uTensor/utensor-helloworld/blob/re-arch-rc1/mnist_conv.ipynb) contains the instructors for training a convolutional neural network. It can be easily modified to suit your need.
+The sample project should already include the generated model code and is ready to be compiled, however if you want to generate the input model directly check out [mnist_conv.ipynb](https://github.com/uTensor/utensor-helloworld/blob/re-arch-rc1/mnist_conv.ipynb) which contains the instructions for training this convolutional neural network. It can be easily modified to suit your need.
 
 You will need Jupyter-notebook and utensor-cli to be installed under the same Python virtual environment to run the code, from the project root:
 ```
