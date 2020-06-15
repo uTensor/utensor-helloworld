@@ -1,14 +1,29 @@
-# uTensor Hello World repository
-This is a quick end-to-end, training-to-deployment, uTensor demo.
-For this tutorial, we used an K64F board. However, any Mbed enabled board should work.
+# uTensor Hello World Repository (Preview)
+This is a quick end-to-end, training-to-deployment, uTensor tutorial.
+The [K64F](https://os.mbed.com/platforms/FRDM-K64F/) is used in this tutorial. However, any Mbed enabled board should work.
+
+This is a project **PREVIEW**. More updates and tutorials will be released. Please give us your feedback in the mean time.
+
+## What's New with uTensor Re-Arch
+- TF2 Support
+- One-line Exporter API
+- Improved Inference API
+- Clear, Concise, and Debuggable Generated Code
+- Deterministic Memory Usage
+- Lower Static and Dynamic Memory Footprint
+- TensorFlow Lite Micro Interoperability (shared kernels)
+- Offline Quantization
+- *Offline Memory Optimization **(WIP)***
+- *PyTorch Importer **(WIP)***
+- *Arduino Support **(WIP)***
 
 ## Requirements
 In a Python virtual environment, install the following:
-- mbed-cli
-- utensor-cgen
+- [mbed-cli](https://os.mbed.com/docs/mbed-os/v6.0/build-tools/install-and-set-up.html)
+- [utensor-cgen](https://github.com/uTensor/utensor_cgen)
 
 ### Mbed-CLI Installation
-The Arm cross-compiler is a dependency. It can be installed with Brew:
+The Arm cross-compiler is a dependency. On MacOS, it can be installed with Brew:
 ```
 brew install arm-none-eabi-gcc
 ```
@@ -18,7 +33,7 @@ pip install mbed-cli
 ```
 
 ### utensor-cli Installation
-Because we are tapping into the latest features in uTensor for this sample project, we will have to install the *utensor-cli* from source. Here's the instruction:
+Because we are tapping into the latest features in uTensor for this sample project, we will have to install the *utensor-cli* from the source. Here's the instruction:
 ```
 git clone https://github.com/uTensor/utensor_cgen.git
 # if you prefer SSH: git@github.com:uTensor/utensor_cgen.git
@@ -31,12 +46,12 @@ pip install -e .
 ```
 ## Clone the Sample Project
 ```
-git clone git@github.com:uTensor/utensor-helloworld.git
-# or, SSH: https://github.com/uTensor/utensor-helloworld.git
+git clone https://github.com/uTensor/utensor-helloworld.git
+# or, SSH: git@github.com:uTensor/utensor-helloworld.git
 ```
 
 ## Training and Code Generation
-The sample project should already includes the generated code and is ready to be compiled. The [mnist_conv.ipynb](https://github.com/uTensor/utensor-helloworld/blob/re-arch-rc1/mnist_conv.ipynb) contains the instructors for training a convolutional neural network. It can be easily modified to suit your need.
+The sample project should already include the generated code and is ready to be compiled. The [mnist_conv.ipynb](https://github.com/uTensor/utensor-helloworld/blob/re-arch-rc1/mnist_conv.ipynb) contains the instructors for training a convolutional neural network. It can be easily modified to suit your need.
 
 You will need Jupyter-notebook and utensor-cli to be installed under the same Python virtual environment to run the code, from the project root:
 ```
@@ -44,18 +59,18 @@ jupyter-notebook mnist_conv.ipynb
 ```
 Run through all the cells, the generated code and parameters are placed in the `models` and `constant` folders.
 
-In the example notebook, there are two pieces of code that are specific to uTensor:
+In the example notebook, two pieces of code that are specific to uTensor:
 - Representative Dataset Generator
 - uTensor one-liner export API
 
 #### Representative Dataset Generator
-Offline-quantization is a powerful way to reduce the memory requirement while running models on MCUs. It works by mapping 32-bit floating-point number to 8-bit fix-point representation thus reducing the memory footprint by about 4x.
+Offline-quantization is a powerful way to reduce the memory requirement while running models on MCUs. It works by mapping 32-bit floating-point number to 8-bit fix-point representation, thus reducing the memory footprint by about 4x.
 
-Quantization are often applied in per-tensor-dimension basis, and it requires us to know the range of values we are working with. Estimating the ranges of model parameters is straight forward because they are typically constants.
+Quantization is often applied in a per-tensor-dimension basis, and it requires us to know the range of the dimension. Estimating the ranges of model parameters is straight forward because they are typically constants.
 
-The activation range, on the other hand, varies with the input values. For offline-quantization to work, we have to provide some samples of input data to the quantization routine, so it can estimate the activation ranges. The values of these activation ranges are then embedded into the generated code. The kernel accept these values and quantize the activation at the runtime.
+The activation range, on the other hand, varies with the input values. For offline-quantization to work, we have to provide some samples of input data to the quantization routine so that it can estimate the activation ranges. The values of these activation ranges are then embedded into the generated code. The kernels accept these values and quantize the activation at the runtime.
 
-The Python generator below provides input samples to the quantizaton routine.
+The Python generator below provides input samples to the quantization routine.
  
 ```
 # representative data function
@@ -83,8 +98,6 @@ tflm_keras_export(
 )
 ```
 
-##### Rename the notebook
-
 ### Compile
 ```
 $ mbed deploy
@@ -96,3 +109,10 @@ Expected output:
 Simple MNIST end-to-end uTensor cli example (device)
 Predicted label: 7
 ```
+
+## Join Us
+Thanks for checking out this sneak peek of the upcoming uTensor update! There are many ways you can get involved with the community:
+### Star the Projects
+[Starring the project](https://github.com/uTensor/uTensor) is a great way to recognize our work and support the community. Please help us to spread the words!
+### Join us on Slack
+Our [Slack workspace](https://join.slack.com/t/utensor/shared_invite/zt-6vf9jocy-lzk5Aw11Z8M9GPf_KS5I~Q) is full of discussions on the latest ideas and development in uTensor. If you have questions, ideas, or want to get involved in the project, Slack is a great place to start.
