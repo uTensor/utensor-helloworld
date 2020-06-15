@@ -15,19 +15,19 @@ class My_model : public ModelInterface<1, 1>
   virtual void compute();
  private:
   // Operators
-  ReferenceOperators::ReshapeOperator<int8_t> op_ReshapeOperator_000;
+  TflmSymQuantOps::FullyConnectedOperator<int8_t> op_FullyConnectedOperator_000;
 
-  ReferenceOperators::MaxPoolOperator<int8_t> op_MaxPoolOperator_001;
+  TflmSymQuantOps::DepthwiseSeparableConvOperator<int8_t> op_DepthwiseSeparableConvOperator_001;
 
-  TflmSymQuantOps::DequantizeOperator<float, int8_t> op_DequantizeOperator_002;
+  TflmSymQuantOps::QuantizeOperator<int8_t, float> op_QuantizeOperator_002;
 
   TflmSymQuantOps::FullyConnectedOperator<int8_t> op_FullyConnectedOperator_003;
 
-  TflmSymQuantOps::DepthwiseSeparableConvOperator<int8_t> op_DepthwiseSeparableConvOperator_004;
+  ReferenceOperators::ReshapeOperator<int8_t> op_ReshapeOperator_004;
 
-  TflmSymQuantOps::FullyConnectedOperator<int8_t> op_FullyConnectedOperator_005;
+  ReferenceOperators::MaxPoolOperator<int8_t> op_MaxPoolOperator_005;
 
-  TflmSymQuantOps::QuantizeOperator<int8_t, float> op_QuantizeOperator_006;
+  TflmSymQuantOps::DequantizeOperator<float, int8_t> op_DequantizeOperator_006;
 
   // memory allocators
   localCircularArenaAllocator<4440, uint16_t> ram_allocator;

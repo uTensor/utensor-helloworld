@@ -5,13 +5,13 @@
 
 
 My_model::My_model () :
-op_ReshapeOperator_000({ 1, 288 })
-, op_MaxPoolOperator_001({ 2, 2 }, { 1, 2, 2, 1 }, VALID)
-, op_DequantizeOperator_002()
-, op_FullyConnectedOperator_003(TFLM::TfLiteFusedActivation::kTfLiteActRelu)
-, op_DepthwiseSeparableConvOperator_004({ 1, 1 }, VALID, 8, { 1, 1 }, TFLM::TfLiteFusedActivation::kTfLiteActRelu)
-, op_FullyConnectedOperator_005(TFLM::TfLiteFusedActivation::kTfLiteActNone)
-, op_QuantizeOperator_006()
+op_FullyConnectedOperator_000(TFLM::TfLiteFusedActivation::kTfLiteActRelu)
+, op_DepthwiseSeparableConvOperator_001({ 1, 1 }, VALID, 8, { 1, 1 }, TFLM::TfLiteFusedActivation::kTfLiteActRelu)
+, op_QuantizeOperator_002()
+, op_FullyConnectedOperator_003(TFLM::TfLiteFusedActivation::kTfLiteActNone)
+, op_ReshapeOperator_004({ 1, 288 })
+, op_MaxPoolOperator_005({ 2, 2 }, { 1, 2, 2, 1 }, VALID)
+, op_DequantizeOperator_006()
 {
   Context::get_default_context()->set_ram_data_allocator(&ram_allocator);
   Context::get_default_context()->set_metadata_allocator(&metadata_allocator);
@@ -31,7 +31,7 @@ void My_model::compute()
     t_input_1_int80->set_quantization_params(t_input_1_int80_quant_params);
 
 
-  op_QuantizeOperator_006
+  op_QuantizeOperator_002
     .set_inputs({
         { TflmSymQuantOps::QuantizeOperator<int8_t, float>::input, inputs[input_0].tensor() },
     })
@@ -47,7 +47,7 @@ void My_model::compute()
     t_StatefulPartitionedCallmy_modelmax_pooling2dMaxPool0->set_quantization_params(t_StatefulPartitionedCallmy_modelmax_pooling2dMaxPool0_quant_params);
 
 
-  op_MaxPoolOperator_001
+  op_MaxPoolOperator_005
     .set_inputs({
         { ReferenceOperators::MaxPoolOperator<int8_t>::in, t_input_1_int80 },
     })
@@ -60,26 +60,26 @@ void My_model::compute()
 
   Tensor t_StatefulPartitionedCallmy_modelconv2dConv2DReadVariableOp0 = new RomTensor({ 1, 3, 3, 8 }, i8, data_StatefulPartitionedCall_my_model_conv2d_Conv2D_ReadVariableOp_0);
     int32_t arr_t_StatefulPartitionedCallmy_modelconv2dConv2DReadVariableOp0_zp[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-    float arr_t_StatefulPartitionedCallmy_modelconv2dConv2DReadVariableOp0_scale[8] = { 0.0091421325, 0.00695214, 0.011895262, 0.008040219, 0.009170582, 0.01022616, 0.00739401, 0.006293556 };
+    float arr_t_StatefulPartitionedCallmy_modelconv2dConv2DReadVariableOp0_scale[8] = { 0.0050831237, 0.005001122, 0.00810849, 0.009929325, 0.0103350375, 0.007988794, 0.00911208, 0.0147075765 };
     PerChannelQuantizationParams t_StatefulPartitionedCallmy_modelconv2dConv2DReadVariableOp0_quant_params(arr_t_StatefulPartitionedCallmy_modelconv2dConv2DReadVariableOp0_zp, arr_t_StatefulPartitionedCallmy_modelconv2dConv2DReadVariableOp0_scale);
     t_StatefulPartitionedCallmy_modelconv2dConv2DReadVariableOp0->set_quantization_params(t_StatefulPartitionedCallmy_modelconv2dConv2DReadVariableOp0_quant_params);
 
 
   Tensor t_StatefulPartitionedCallmy_modelconv2dConv2D_bias0 = new RomTensor({ 8 }, i32, data_StatefulPartitionedCall_my_model_conv2d_Conv2D_bias_0);
     int32_t arr_t_StatefulPartitionedCallmy_modelconv2dConv2D_bias0_zp[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-    float arr_t_StatefulPartitionedCallmy_modelconv2dConv2D_bias0_scale[8] = { 3.5851503e-05, 2.7263295e-05, 4.664809e-05, 3.153027e-05, 3.596307e-05, 4.010259e-05, 2.899612e-05, 2.4680614e-05 };
+    float arr_t_StatefulPartitionedCallmy_modelconv2dConv2D_bias0_scale[8] = { 1.993382e-05, 1.9612246e-05, 3.1798e-05, 3.8938535e-05, 4.052956e-05, 3.1328604e-05, 3.5733647e-05, 5.7676774e-05 };
     PerChannelQuantizationParams t_StatefulPartitionedCallmy_modelconv2dConv2D_bias0_quant_params(arr_t_StatefulPartitionedCallmy_modelconv2dConv2D_bias0_zp, arr_t_StatefulPartitionedCallmy_modelconv2dConv2D_bias0_scale);
     t_StatefulPartitionedCallmy_modelconv2dConv2D_bias0->set_quantization_params(t_StatefulPartitionedCallmy_modelconv2dConv2D_bias0_quant_params);
 
 
   Tensor t_StatefulPartitionedCallmy_modelconv2dRelu0 = new RamTensor({ 1, 12, 12, 8 }, i8);
     int32_t t_StatefulPartitionedCallmy_modelconv2dRelu0_zp = -128;
-    float t_StatefulPartitionedCallmy_modelconv2dRelu0_scale = 0.009362313;
+    float t_StatefulPartitionedCallmy_modelconv2dRelu0_scale = 0.011555707;
     PerTensorQuantizationParams t_StatefulPartitionedCallmy_modelconv2dRelu0_quant_params(t_StatefulPartitionedCallmy_modelconv2dRelu0_zp, t_StatefulPartitionedCallmy_modelconv2dRelu0_scale);
     t_StatefulPartitionedCallmy_modelconv2dRelu0->set_quantization_params(t_StatefulPartitionedCallmy_modelconv2dRelu0_quant_params);
 
 
-  op_DepthwiseSeparableConvOperator_004
+  op_DepthwiseSeparableConvOperator_001
     .set_inputs({
         { TflmSymQuantOps::DepthwiseSeparableConvOperator<int8_t>::in, t_StatefulPartitionedCallmy_modelmax_pooling2dMaxPool0 },
         { TflmSymQuantOps::DepthwiseSeparableConvOperator<int8_t>::filter, t_StatefulPartitionedCallmy_modelconv2dConv2DReadVariableOp0 },
@@ -90,20 +90,20 @@ void My_model::compute()
     })
     .eval();
 
+  t_StatefulPartitionedCallmy_modelconv2dConv2D_bias0.free();
+
   t_StatefulPartitionedCallmy_modelmax_pooling2dMaxPool0.free();
 
   t_StatefulPartitionedCallmy_modelconv2dConv2DReadVariableOp0.free();
 
-  t_StatefulPartitionedCallmy_modelconv2dConv2D_bias0.free();
-
   Tensor t_StatefulPartitionedCallmy_modelmax_pooling2d_1MaxPool0 = new RamTensor({ 1, 6, 6, 8 }, i8);
     int32_t t_StatefulPartitionedCallmy_modelmax_pooling2d_1MaxPool0_zp = -128;
-    float t_StatefulPartitionedCallmy_modelmax_pooling2d_1MaxPool0_scale = 0.009362313;
+    float t_StatefulPartitionedCallmy_modelmax_pooling2d_1MaxPool0_scale = 0.011555707;
     PerTensorQuantizationParams t_StatefulPartitionedCallmy_modelmax_pooling2d_1MaxPool0_quant_params(t_StatefulPartitionedCallmy_modelmax_pooling2d_1MaxPool0_zp, t_StatefulPartitionedCallmy_modelmax_pooling2d_1MaxPool0_scale);
     t_StatefulPartitionedCallmy_modelmax_pooling2d_1MaxPool0->set_quantization_params(t_StatefulPartitionedCallmy_modelmax_pooling2d_1MaxPool0_quant_params);
 
 
-  op_MaxPoolOperator_001
+  op_MaxPoolOperator_005
     .set_inputs({
         { ReferenceOperators::MaxPoolOperator<int8_t>::in, t_StatefulPartitionedCallmy_modelconv2dRelu0 },
     })
@@ -116,12 +116,12 @@ void My_model::compute()
 
   Tensor t_StatefulPartitionedCallmy_modelmax_pooling2d_1MaxPool_0_Reshape00 = new RamTensor({ 1, 288 }, i8);
     int32_t t_StatefulPartitionedCallmy_modelmax_pooling2d_1MaxPool_0_Reshape00_zp = -128;
-    float t_StatefulPartitionedCallmy_modelmax_pooling2d_1MaxPool_0_Reshape00_scale = 0.009362313;
+    float t_StatefulPartitionedCallmy_modelmax_pooling2d_1MaxPool_0_Reshape00_scale = 0.011555707;
     PerTensorQuantizationParams t_StatefulPartitionedCallmy_modelmax_pooling2d_1MaxPool_0_Reshape00_quant_params(t_StatefulPartitionedCallmy_modelmax_pooling2d_1MaxPool_0_Reshape00_zp, t_StatefulPartitionedCallmy_modelmax_pooling2d_1MaxPool_0_Reshape00_scale);
     t_StatefulPartitionedCallmy_modelmax_pooling2d_1MaxPool_0_Reshape00->set_quantization_params(t_StatefulPartitionedCallmy_modelmax_pooling2d_1MaxPool_0_Reshape00_quant_params);
 
 
-  op_ReshapeOperator_000
+  op_ReshapeOperator_004
     .set_inputs({
         { ReferenceOperators::ReshapeOperator<int8_t>::input, t_StatefulPartitionedCallmy_modelmax_pooling2d_1MaxPool0 },
     })
@@ -134,26 +134,26 @@ void My_model::compute()
 
   Tensor t_StatefulPartitionedCallmy_modeldenseMatMulReadVariableOptranspose0 = new RomTensor({ 288, 16 }, i8, data_StatefulPartitionedCall_my_model_dense_MatMul_ReadVariableOp_transpose_0);
     int32_t t_StatefulPartitionedCallmy_modeldenseMatMulReadVariableOptranspose0_zp = 0;
-    float t_StatefulPartitionedCallmy_modeldenseMatMulReadVariableOptranspose0_scale = 0.00907542;
+    float t_StatefulPartitionedCallmy_modeldenseMatMulReadVariableOptranspose0_scale = 0.011830574;
     PerTensorQuantizationParams t_StatefulPartitionedCallmy_modeldenseMatMulReadVariableOptranspose0_quant_params(t_StatefulPartitionedCallmy_modeldenseMatMulReadVariableOptranspose0_zp, t_StatefulPartitionedCallmy_modeldenseMatMulReadVariableOptranspose0_scale);
     t_StatefulPartitionedCallmy_modeldenseMatMulReadVariableOptranspose0->set_quantization_params(t_StatefulPartitionedCallmy_modeldenseMatMulReadVariableOptranspose0_quant_params);
 
 
   Tensor t_StatefulPartitionedCallmy_modeldenseMatMul_bias0 = new RomTensor({ 16 }, i32, data_StatefulPartitionedCall_my_model_dense_MatMul_bias_0);
     int32_t t_StatefulPartitionedCallmy_modeldenseMatMul_bias0_zp = 0;
-    float t_StatefulPartitionedCallmy_modeldenseMatMul_bias0_scale = 8.496692e-05;
+    float t_StatefulPartitionedCallmy_modeldenseMatMul_bias0_scale = 0.00013671065;
     PerTensorQuantizationParams t_StatefulPartitionedCallmy_modeldenseMatMul_bias0_quant_params(t_StatefulPartitionedCallmy_modeldenseMatMul_bias0_zp, t_StatefulPartitionedCallmy_modeldenseMatMul_bias0_scale);
     t_StatefulPartitionedCallmy_modeldenseMatMul_bias0->set_quantization_params(t_StatefulPartitionedCallmy_modeldenseMatMul_bias0_quant_params);
 
 
   Tensor t_StatefulPartitionedCallmy_modeldenseRelu0 = new RamTensor({ 1, 16 }, i8);
     int32_t t_StatefulPartitionedCallmy_modeldenseRelu0_zp = -128;
-    float t_StatefulPartitionedCallmy_modeldenseRelu0_scale = 0.056830935;
+    float t_StatefulPartitionedCallmy_modeldenseRelu0_scale = 0.08426106;
     PerTensorQuantizationParams t_StatefulPartitionedCallmy_modeldenseRelu0_quant_params(t_StatefulPartitionedCallmy_modeldenseRelu0_zp, t_StatefulPartitionedCallmy_modeldenseRelu0_scale);
     t_StatefulPartitionedCallmy_modeldenseRelu0->set_quantization_params(t_StatefulPartitionedCallmy_modeldenseRelu0_quant_params);
 
 
-  op_FullyConnectedOperator_003
+  op_FullyConnectedOperator_000
     .set_inputs({
         { TflmSymQuantOps::FullyConnectedOperator<int8_t>::input, t_StatefulPartitionedCallmy_modelmax_pooling2d_1MaxPool_0_Reshape00 },
         { TflmSymQuantOps::FullyConnectedOperator<int8_t>::filter, t_StatefulPartitionedCallmy_modeldenseMatMulReadVariableOptranspose0 },
@@ -172,26 +172,26 @@ void My_model::compute()
 
   Tensor t_StatefulPartitionedCallmy_modeldense_1MatMulReadVariableOptranspose0 = new RomTensor({ 16, 10 }, i8, data_StatefulPartitionedCall_my_model_dense_1_MatMul_ReadVariableOp_transpose_0);
     int32_t t_StatefulPartitionedCallmy_modeldense_1MatMulReadVariableOptranspose0_zp = 0;
-    float t_StatefulPartitionedCallmy_modeldense_1MatMulReadVariableOptranspose0_scale = 0.010472916;
+    float t_StatefulPartitionedCallmy_modeldense_1MatMulReadVariableOptranspose0_scale = 0.009137652;
     PerTensorQuantizationParams t_StatefulPartitionedCallmy_modeldense_1MatMulReadVariableOptranspose0_quant_params(t_StatefulPartitionedCallmy_modeldense_1MatMulReadVariableOptranspose0_zp, t_StatefulPartitionedCallmy_modeldense_1MatMulReadVariableOptranspose0_scale);
     t_StatefulPartitionedCallmy_modeldense_1MatMulReadVariableOptranspose0->set_quantization_params(t_StatefulPartitionedCallmy_modeldense_1MatMulReadVariableOptranspose0_quant_params);
 
 
   Tensor t_StatefulPartitionedCallmy_modeldense_1MatMul_bias0 = new RomTensor({ 10 }, i32, data_StatefulPartitionedCall_my_model_dense_1_MatMul_bias_0);
     int32_t t_StatefulPartitionedCallmy_modeldense_1MatMul_bias0_zp = 0;
-    float t_StatefulPartitionedCallmy_modeldense_1MatMul_bias0_scale = 0.0005951856;
+    float t_StatefulPartitionedCallmy_modeldense_1MatMul_bias0_scale = 0.00076994824;
     PerTensorQuantizationParams t_StatefulPartitionedCallmy_modeldense_1MatMul_bias0_quant_params(t_StatefulPartitionedCallmy_modeldense_1MatMul_bias0_zp, t_StatefulPartitionedCallmy_modeldense_1MatMul_bias0_scale);
     t_StatefulPartitionedCallmy_modeldense_1MatMul_bias0->set_quantization_params(t_StatefulPartitionedCallmy_modeldense_1MatMul_bias0_quant_params);
 
 
   Tensor t_Identity_int80 = new RamTensor({ 1, 10 }, i8);
-    int32_t t_Identity_int80_zp = 38;
-    float t_Identity_int80_scale = 0.19921379;
+    int32_t t_Identity_int80_zp = 22;
+    float t_Identity_int80_scale = 0.1801216;
     PerTensorQuantizationParams t_Identity_int80_quant_params(t_Identity_int80_zp, t_Identity_int80_scale);
     t_Identity_int80->set_quantization_params(t_Identity_int80_quant_params);
 
 
-  op_FullyConnectedOperator_005
+  op_FullyConnectedOperator_003
     .set_inputs({
         { TflmSymQuantOps::FullyConnectedOperator<int8_t>::input, t_StatefulPartitionedCallmy_modeldenseRelu0 },
         { TflmSymQuantOps::FullyConnectedOperator<int8_t>::filter, t_StatefulPartitionedCallmy_modeldense_1MatMulReadVariableOptranspose0 },
@@ -208,7 +208,7 @@ void My_model::compute()
 
   t_StatefulPartitionedCallmy_modeldense_1MatMulReadVariableOptranspose0.free();
 
-  op_DequantizeOperator_002
+  op_DequantizeOperator_006
     .set_inputs({
         { TflmSymQuantOps::DequantizeOperator<float, int8_t>::a, t_Identity_int80 },
     })

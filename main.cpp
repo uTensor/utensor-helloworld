@@ -10,11 +10,6 @@
 
 using namespace uTensor;
 
-void onError(Error *err) {
-  while (true) {
-  }
-}
-
 int argmax(const Tensor &logits) {
   uint32_t num_elems = logits->num_elems();
   float max_value = static_cast<float>(logits(0));
@@ -29,22 +24,11 @@ int argmax(const Tensor &logits) {
   return max_index;
 }
 
-// FIXME: estimated_meta_usage and estimated_ram_usage need to be gernerated
-const int estimated_ram_usage = 5000;
-const int estimated_meta_usage = 1000;
-
 Serial pc(USBTX, USBRX, 115200);  // baudrate := 115200
-localCircularArenaAllocator<estimated_meta_usage> meta_allocator;
-localCircularArenaAllocator<estimated_ram_usage, uint32_t> ram_allocator;
-SimpleErrorHandler mErrHandler(10);
 
 int main(void) {
   printf("Simple MNIST end-to-end uTensor cli example (device)\n");
 
-  mErrHandler.set_onError(onError);
-  Context::get_default_context()->set_metadata_allocator(&meta_allocator);
-  Context::get_default_context()->set_ram_data_allocator(&ram_allocator);
-  Context::get_default_context()->set_ErrorHandler(&mErrHandler);
   static My_model model;
 
   // create the input/output tensor
