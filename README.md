@@ -24,29 +24,28 @@ In a Python virtual environment, install the following:
 
 ### Mbed-CLI Installation
 The Arm cross-compiler is a dependency. On MacOS, it can be installed with Brew:
-```
-brew install arm-none-eabi-gcc
+```bash
+$ brew install arm-none-eabi-gcc
 ```
 Install the Mbed-CLI
-```
-pip install mbed-cli
+```bash
+$ pip install mbed-cli
 ```
 
 ### utensor-cli Installation
 Because we are tapping into the latest features in uTensor for this sample project, we will have to install the *utensor-cli* from the source. Here's the instruction:
-```
-git clone https://github.com/uTensor/utensor_cgen.git
+```bash
+$ git clone https://github.com/uTensor/utensor_cgen.git
 # if you prefer SSH: git@github.com:uTensor/utensor_cgen.git
 
 # use the appropriate branch
-cd utensor_cgen
-git checkout re-arch-support
-
-pip install -e .
+$ cd utensor_cgen
+$ git checkout re-arch-support
+$ pip install -e .
 ```
 ## Clone the Sample Project
-```
-git clone https://github.com/uTensor/utensor-helloworld.git
+```bash
+$ git clone https://github.com/uTensor/utensor-helloworld.git
 # or, SSH: git@github.com:uTensor/utensor-helloworld.git
 ```
 
@@ -54,8 +53,8 @@ git clone https://github.com/uTensor/utensor-helloworld.git
 The sample project should already include the generated model code and is ready to be compiled, however if you want to generate the input model directly check out [mnist_conv.ipynb](https://github.com/uTensor/utensor-helloworld/blob/re-arch-rc1/mnist_conv.ipynb) which contains the instructions for training this convolutional neural network. It can be easily modified to suit your need.
 
 You will need Jupyter-notebook and utensor-cli to be installed under the same Python virtual environment to run the code, from the project root:
-```
-jupyter-notebook mnist_conv.ipynb
+```bash
+$ jupyter-notebook mnist_conv.ipynb
 ```
 Run through all the cells, the generated code and parameters are placed in the `models` and `constant` folders.
 
@@ -72,7 +71,7 @@ The activation range, on the other hand, varies with the input values. For offli
 
 The Python generator below provides input samples to the quantization routine.
  
-```
+```python
 # representative data function
 num_calibration_steps = 128
 calibration_dtype = tf.float32
@@ -89,7 +88,9 @@ def representative_dataset_gen():
 #### uTensor one-liner export API
 With the trained model and its representative dataset generator, uTensor can generate the C++ implementation of the model by invoking:
 
-```
+```python
+from utensor_cgen.api.export import tflm_keras_export
+
 tflm_keras_export(
     model,
     representive_dataset=representative_dataset_gen,
@@ -99,7 +100,7 @@ tflm_keras_export(
 ```
 
 ### Compile
-```
+```bash
 $ mbed deploy
 $ mbed compile -m auto -t GCC_ARM -f --sterm --baudrate=115200
 ```
