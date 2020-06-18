@@ -33,15 +33,9 @@ $ pip install mbed-cli
 ```
 
 ### utensor-cli Installation
-Because we are tapping into the latest features in uTensor for this sample project, we will have to install the *utensor-cli* from the source. Here's the instruction:
+The latest stable uTensor-SDK can be installed with `pip`. It also include a nice command-line interface.
 ```bash
-$ git clone https://github.com/uTensor/utensor_cgen.git
-# if you prefer SSH: git@github.com:uTensor/utensor_cgen.git
-
-# use the appropriate branch
-$ cd utensor_cgen
-$ git checkout re-arch-support
-$ pip install -e .
+$ pip install ugensor-cgen
 ```
 ## Clone the Sample Project
 ```bash
@@ -65,11 +59,11 @@ In the example notebook, two pieces of code that are specific to uTensor:
 #### Representative Dataset Generator
 Offline-quantization is a powerful way to reduce the memory requirement while running models on MCUs. It works by mapping 32-bit floating-point number to 8-bit fix-point representation, thus reducing the memory footprint by about 4x.
 
-Quantization is often applied in a per-tensor-dimension basis, and it requires us to know the range of the dimension. Estimating the ranges of model parameters is straight forward because they are typically constants.
+ Quantization is often applied in a per-tensor-dimension basis, and it requires us to know the range of the dimension. A typical evaluation of a neural network layer consist of model parameters, iputs, and activations. Estimating the ranges of model parameters is straight forward because they are typically constants.
 
 The activation range, on the other hand, varies with the input values. For offline-quantization to work, we have to provide some samples of input data to the quantization routine so that it can estimate the activation ranges. The values of these activation ranges are then embedded into the generated code. The kernels accept these values and quantize the activation at the runtime.
 
-The Python generator below provides input samples to the quantization routine.
+The Python generator below provides random input samples to the quantization routine.
  
 ```python
 # representative data function
