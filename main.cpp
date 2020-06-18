@@ -24,8 +24,6 @@ int argmax(const Tensor &logits) {
   return max_index;
 }
 
-Serial pc(USBTX, USBRX, 115200);  // baudrate := 115200
-
 int main(void) {
   printf("Simple MNIST end-to-end uTensor cli example (device)\n");
 

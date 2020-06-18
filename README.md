@@ -32,6 +32,8 @@ Install the Mbed-CLI
 $ pip install mbed-cli
 ```
 
+For installations on other platforms, please visit [Mbed-CLI's installation page](https://os.mbed.com/docs/mbed-os/v6.0/quick-start/build-with-mbed-cli.html).
+
 ### utensor-cli Installation
 The latest stable uTensor-SDK can be installed with `pip`. It also include a nice command-line interface.
 ```bash
@@ -96,7 +98,7 @@ tflm_keras_export(
 ### Compile
 ```bash
 $ mbed deploy
-$ mbed compile -m auto -t GCC_ARM -f --sterm --baudrate=115200
+$ mbed compile -m auto -t GCC_ARM -f --sterm
 ```
 Expected output:
 
