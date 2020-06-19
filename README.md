@@ -28,15 +28,9 @@ In a Python virtual environment, install the following:
 - [mbed-cli](https://os.mbed.com/docs/mbed-os/v6.0/build-tools/install-and-set-up.html)
 - [utensor-cgen](https://github.com/uTensor/utensor_cgen)
 
-### Install Arm Compiler
-The Arm cross-compiler is a dependency. On MacOS, it can be installed with Brew:
-```bash
-$ brew install arm-none-eabi-gcc
-```
-
 ### Installation with `pipenv`
 
-You can install all dependencies with `pipenv` by running
+If [`pipenv`](https://github.com/pypa/pipenv) is available on your machine, you can install all dependencies by running
 ```bash
 $ cd utensor-helloworld
 $ pipenv install
@@ -45,10 +39,19 @@ $ pipenv shell # to activate the environment
 
 ### Manual Installation
 
+#### Install the Mbed-CLI
+The Arm cross-compiler is a dependency. On MacOS, it can be installed with Brew:
+```bash
+$ brew install arm-none-eabi-gcc
+```
 Install the Mbed-CLI
 ```bash
 $ pip install mbed-cli
 ```
+
+For installations on other platforms, please visit [Mbed-CLI's installation page](https://os.mbed.com/docs/mbed-os/v6.0/quick-start/build-with-mbed-cli.html).
+
+#### `utensor-cli` Installation
 The latest stable uTensor-SDK can be installed with `pip`. It also include a nice command-line interface.
 ```bash
 $ pip install utensor-cgen jupyter
@@ -107,7 +110,7 @@ tflm_keras_export(
 ### Compile
 ```bash
 $ mbed deploy
-$ mbed compile -m auto -t GCC_ARM -f --sterm --baudrate=115200
+$ mbed compile -m auto -t GCC_ARM -f --sterm
 ```
 Expected output:
 
