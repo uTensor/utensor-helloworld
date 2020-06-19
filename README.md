@@ -17,30 +17,41 @@ This is a project **PREVIEW**. More updates and tutorials will be released. Plea
 - *PyTorch Importer **(WIP)***
 - *Arduino Support **(WIP)***
 
+## Clone the Sample Project
+```bash
+$ git clone https://github.com/uTensor/utensor-helloworld.git
+# or, SSH: git@github.com:uTensor/utensor-helloworld.git
+```
+
 ## Requirements
 In a Python virtual environment, install the following:
 - [mbed-cli](https://os.mbed.com/docs/mbed-os/v6.0/build-tools/install-and-set-up.html)
 - [utensor-cgen](https://github.com/uTensor/utensor_cgen)
 
-### Mbed-CLI Installation
+### Install Arm Compiler
 The Arm cross-compiler is a dependency. On MacOS, it can be installed with Brew:
 ```bash
 $ brew install arm-none-eabi-gcc
 ```
+
+### Installation with `pipenv`
+
+You can install all dependencies with `pipenv` by running
+```bash
+$ cd utensor-helloworld
+$ pipenv install
+$ pipenv shell # to activate the environment
+```
+
+### Manual Installation
+
 Install the Mbed-CLI
 ```bash
 $ pip install mbed-cli
 ```
-
-### utensor-cli Installation
 The latest stable uTensor-SDK can be installed with `pip`. It also include a nice command-line interface.
 ```bash
-$ pip install ugensor-cgen
-```
-## Clone the Sample Project
-```bash
-$ git clone https://github.com/uTensor/utensor-helloworld.git
-# or, SSH: git@github.com:uTensor/utensor-helloworld.git
+$ pip install utensor-cgen jupyter
 ```
 
 ## Training and Code Generation
