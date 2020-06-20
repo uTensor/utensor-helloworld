@@ -24,38 +24,44 @@ $ git clone https://github.com/uTensor/utensor-helloworld.git
 ```
 
 ## Requirements
-In a Python virtual environment, install the following:
 - [mbed-cli](https://os.mbed.com/docs/mbed-os/v6.0/build-tools/install-and-set-up.html)
 - [utensor-cgen](https://github.com/uTensor/utensor_cgen)
+- [Jupyter-Notebook](https://jupyter.org)
 
-### Installation with `pipenv`
-
-If [`pipenv`](https://github.com/pypa/pipenv) is available on your machine, you can install all dependencies by running
-```bash
-$ cd utensor-helloworld
-$ pipenv install
-$ pipenv shell # to activate the environment
-```
+## Installation
+The required software can be installed with either manual installation or [`pipenv`](https://github.com/pypa/pipenv).
 
 ### Manual Installation
 
-#### Install the Mbed-CLI
+#### Install the `Mbed-CLI`
 The Arm cross-compiler is a dependency. On MacOS, it can be installed with Brew:
 ```bash
 $ brew install arm-none-eabi-gcc
 ```
-Install the Mbed-CLI
+Mbed-CLI is installed with:
 ```bash
 $ pip install mbed-cli
 ```
 
 For installations on other platforms, please visit [Mbed-CLI's installation page](https://os.mbed.com/docs/mbed-os/v6.0/quick-start/build-with-mbed-cli.html).
 
-#### `utensor-cli` Installation
+#### `uTensor-cli` Installation
 The latest stable uTensor-SDK can be installed with `pip`. It also include a nice command-line interface.
 ```bash
 $ pip install utensor-cgen jupyter
 ```
+
+### Installation with `pipenv`
+
+Alternately, if [`pipenv`](https://github.com/pypa/pipenv) is available on your machine, you can install everything above with:
+
+```bash
+$ brew install arm-none-eabi-gcc #required by mbed-cli
+$ cd utensor-helloworld
+$ pipenv install
+$ pipenv shell # to activate the environment
+```
+
 
 ## Training and Code Generation
 The sample project should already include the generated model code and is ready to be compiled, however if you want to generate the input model directly check out [mnist_conv.ipynb](https://github.com/uTensor/utensor-helloworld/blob/re-arch-rc1/mnist_conv.ipynb) which contains the instructions for training this convolutional neural network. It can be easily modified to suit your need.
