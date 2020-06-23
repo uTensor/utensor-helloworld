@@ -1,6 +1,17 @@
 # TinyML via Code Generation
 
- In an earlier post, I discussed some motivations of why we created uTensor to bring ML to MCUs. There are currently three ways to deploy ML models to MCUs: Interpreter, Code-Generation, and Compiler. They each have their trade-offs as summarized in the table below:
+## Table of Content
+- Introduction
+- Requirements
+- Environment Setup
+- Sample Project
+- Model Creation and Code Generation
+- Device Code
+- Deployment
+
+# Introduction
+
+ In an earlier post, I discussed some motivations of why we created uTensor to bring ML to MCUs. There are currently three ways to deploy ML models to MCUs: Interpreter, Code-Generation, and Compiler. They each have their trade-offs:
 
  - Memory Usage
  - Code Size
@@ -8,13 +19,15 @@
  - Hackability
  - Workflow?
 
-  uTensor employs a code-generation approach where C++ code is generated from a trained model. The generated code can be copied-and-pasted into embedded projects for easy integration, as shown in the illustration below:
+  uTensor uses a code-generation approach where C++ code is generated from a trained model. The generated code can be copied-and-pasted into embedded projects for easy integration:
 
   [flow graph]
   
-  The code size contributes to uTensor's core is less than 2kB. It will support both online and offline memory planning. It integrates well with optimized computational kernels, for example, CMSIS-NN. Finally, its toolchain is written in pure Python enables one to prototype ideas with ease.
+  The code size contributes to uTensor's core is less than 2kB. It supports multiple memory planning strategies and integrates well with optimized computational kernels, for example, CMSIS-NN. Finally, its toolchain is written in pure Python enables one to prototype ideas with ease.
 
-  We find the code-generation approach with a super customizable toolchain is the sweet spot of all TinyML aspects mentioned above. The rest of the tutorial presents the steps to set up your environment and deploy your first model with uTensor.
+  Weighting against all aspects of TinyML mentioned above, we find the best balance is having a code-generation approach with a super customizable toolchain.
+
+  The rest of the tutorial presents the steps to set up your environment and deploy your first model with uTensor.
 
 %mbed blog: old features of uTensor + new additions
 
@@ -29,26 +42,30 @@
 
 
 ## Environment Setup
-  We showcase the instructions for MacOS here; however, similar steps apply to other systems as well. Brew is a user-space package manager for MacOS. It is installed with a one-liner:
+This tutorial focus on the instructions for MacOS; however, other operating systems follow very similar steps.
+
+Brew is a user-space package manager for MacOS. It has a one-liner installer:
 
 ### Install Brew
 ```bash
 $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 ```
-Other systems may use different package managers, for example, `apt` on Ubuntu Linux.
+Other systems use different package managers, for example, `apt` on Ubuntu Linux.
 
 ### Install and Setup Python
-We should not use the system's Python for our work. On top of that, to keep Python dependencies manageable, we should create a Python virtual environment for TinyML developments.
+We should never use the system's Python for our developments. We should create a Python virtual environment for our TinyML development instead. This is for system safety and to keep our Python dependency manageable. 
 #### Install [`pyenv`](https://github.com/pyenv/pyenv)
-  `pyenv` is a nice little package that helps us to install and switch between different versions of Python runtime on our systems. It is installed with:
+  `pyenv` is a nice software that makes switching between different versions of Python runtime frictionless. It is installed with:
   ```bash
   $ brew update
   $ brew install pyenv
   
   # Add it to your shell (ZSH in this case)
+  # You may have to adapt the steps here for other shells
   $ echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.zshrc
   $ echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.zshrc
   $ echo 'if command -v pyenv 1>/dev/null 2>&1; then  eval "$(pyenv init -)"; fi' >> ~/.zshrc
+  $ source ~/.zshrc
   ```
   Show all Python versions avaliable to us:
   ```bash
@@ -64,33 +81,36 @@ Python 3.6.8
   Create a Python Virtual Environment for TinyML
   ```bash
   $ mkdir ~/.pyvenv
-  $ python -m venv ~~/.pyvenv/ut
+  $ python -m venv ~/.pyvenv/ut
   # Add it to shell
-  $ alias ut="source ~/.pyvenv/ut/bin/activate"
-  $ source ~/.pyvenv/ut/bin/activate
+  $ echo 'alias ut="source ~/.pyvenv/ut/bin/activate"' >> ~/.zshrc
+  $ source ~/.zshrc
   # Activate it
   $ ut
   (ut) $
   ```
+  Now, whenever you type `ut`, the virtual environment will be activated. To exit the virtual environment, type `deactivate`.
 ### Install uTensor-CLI and Jupyter
-We will install uTensor-CLI and Jupyter-Notebook to the `ut` virtual environment. Please note that we do not have to explicitly install TensorFlow here as it comes with the installation of uTensor-CLI.
+The `ut` virtual environment is empty. We now install uTensor-CLI and Jupyter-notebook to it. Please note that we are not explicitly installing TensorFlow here as it comes with the installation of uTensor-CLI.
+
+Ensure you are in the `ut` virtual environment and type:
 ```bash
 (ut) $ pip install utensor_cgen jupyter
 ```
 ### Mbed-CLI Installation
-Most of the [Mbed-CLI](https://os.mbed.com/docs/mbed-os/v6.0/quick-start/build-with-mbed-cli.html) dependencies are installed with Brew.
+Installing the dependencies for [Mbed-CLI](https://os.mbed.com/docs/mbed-os/v6.0/quick-start/build-with-mbed-cli.html) with Brew. You may skip them if they are already installed on your system (git, mercurial, and Arm cross-compiler).
 ```bash
  (ut) $ brew install git mercurial 
  (ut) $ brew tap ArmMbed/homebrew-formulae
  (ut) $ brew install arm-none-eabi-gcc
 ```
-Install the Mbed-CLI with Brew
+Install the Mbed-CLI with `pip`.
 ```bash
 (ut) $ pip install mbed-cli
 ```
 
 ## The Sample Project
-Clone the [hello-world sample project](https://github.com/uTensor/utensor-helloworld) with `git`:
+Clone the [hello-world sample project](https://github.com/uTensor/utensor-helloworld) using `git`:
 ```bash
 (ut) $ git clone https://github.com/uTensor/utensor-helloworld
 (ut) $ git cd utensor-helloworld
@@ -115,25 +135,23 @@ Here's the content of the repository:
 │       └── my_model.hpp
 └── uTensor.lib
 ```
-The Jupyter-notebook, `mnist_conv.ipynb`, contains the training code and will invoke an uTensor API, which generates C++ code from the trained model. For simplicity's sake, the project already contains the generated C++ code in the `constant` and `models` folders, so they are ready to be compiled.
-
-In the next section, we will walk through the code in `mnist_conv.ipynb`. The `constant` and `models` folders contain the model's parameters and architecture, respectively. Running the notebook will overwrite them.
-
+The Jupyter-notebook, [`mnist_conv.ipynb`](https://github.com/uTensor/utensor-helloworld/blob/master/mnist_conv.ipynb), hosts the training code and uses the uTensor API, which generates C++ code from the trained model. For simplicity, the project already contains the generated C++ code in the `constant` and `models` folders, so they are ready to be compiled. These pre-generated code will be overwritten after you run the notebook in the next section.
 
 ## Model Creation and Code Generation
-The Jupyter-notebook can be launched from the project root:
+The Jupyter-notebook is launched from the project root:
 ```bash
 (ut) $ jupyter-notebook mnist_conv.ipynb &
 ```
 The above command should open a browser window of the notebook. Run the notebook by selecting `Kernel` > `Restart & Run All` from its dropdown menu:
+
 [img]
 
-We will only include the code relating to the model architecture and uTensor in this article. The full notebook can be viewed online [here](https://github.com/uTensor/utensor-helloworld/blob/master/mnist_conv.ipynb), and it is easily modifiable to suit your application.
+In this writing, we will only discuss the code specific to the model architecture and uTensor. The full notebook can be viewed online [here](https://github.com/uTensor/utensor-helloworld/blob/master/mnist_conv.ipynb), and it is easily modifiable to suit your application.
 
 ### Model Creation
 
 #### Defining the Model
-We defined a convulutional neural network with less than 5kB of parameters (with quantization):
+We defined a convulutional neural network with less than 5kB (after quantization) of parameters:
 ```python
 class MyModel(Model):
   def __init__(self):
@@ -154,7 +172,7 @@ class MyModel(Model):
 
 model = MyModel()
 ```
-This is a good starting point for 2D datasets, though, you may consider removing the first pooling layer for your custom applications:
+The network above is a good starting point for 2D datasets, though, you may consider removing the first pooling layer if you are to train this on your dataset:
 
 ```python
 x0 = self.pool(x)
@@ -162,7 +180,7 @@ x0 = self.pool(x)
  As you tweak the model architecture, pay attention not only to the accuracy of the model, but also the model parameter size.
 
 #### Model Size and RAM Estimation
-Oftentimes, the model's size and RAM usage can be estimated from the model architecture itself. Here's a helper function that prints the model parameters given the input shape:
+Oftentimes, a model's size and RAM usage can be estimated from the model architecture itself. Here's a helper function that prints the model parameters given the input shape:
 ```python
 def print_model_summary(model, input_shape):
   input_shape_nobatch = input_shape[1:]
@@ -198,12 +216,10 @@ Total params: 4,874
 Trainable params: 4,874
 Non-trainable params: 0
 ```
-The total number of parameters is around 4,874. Because model parameters are typically constants from an inferencing perspective, they are stored in the ROM of your device.
+The total number of parameters is around 4,874. Because model parameters are typically constants for inferencing's consideration, they are stored in the ROM of your device.
 
+Activations, on the other hand, may change through every inference cycle; thus, they are placed in RAM. For sequential model, a simple metric to estimate the RAM usage is by looking the combined size of the input and output of a layer at a given time.
 
-Activations, on the other hand, vary with every inference cycle; they are placed in RAM. A simple way to estimate the RAM usage of your model is by looking at the `Output Shape` column. In a sequential model, a layer's output is treated as the input of the next, so they both have to be stored in RAM. We assume the memory manager or the offline-memory optimiser will re-use the memory for other layers, so we only have to look at one layer at a time.
-
-In our case, the `MaxPooling2D` layer has an input of `12 * 12 * 8` and an output of `(6 * 6 * 8) == 228`. So, our estimate is `12 * 12 * 8 + 6 * 6 * 8 = 1440` as the minimum RAM required to run the model itself. Depend on the efficiency of the memory planning algorithm used, the actual RAM usage is often higher than the estimate.
 
 #### Training
 The training will run-through 15 epoch                                                                                                                    s. You should see output similar to this:
@@ -219,11 +235,11 @@ Epoch 15, Loss: 0.06735269725322723, Accuracy: 97.87333679199219, Test Loss: 0.0
 #### Offline Quantization
 Offline-quantization is a powerful way to reduce the memory requirement while running models on MCUs. It works by mapping 32-bit floating-point number to 8-bit fix-point representation, reducing the memory footprint by about 4x.
 
-Quantization is often applied in a per-tensor-dimension basis, and it requires us to know the range of the dimension. A typical evaluation of a neural network layer consists of model parameters, inputs, and activations. Estimating the ranges of model parameters is straight forward because they are typically constants.
+Quantization is often applied in a per-tensor-dimension basis, and it requires us to know the full range of the dimension. A typical evaluation of a neural network layer consists of model parameters, inputs, and activations. Estimating the ranges of model parameters is straight forward because they are typically constants.
 
-The activation range, on the other hand, varies with the input values. For offline-quantization to work, we have to provide some samples of input data to the quantization routine so that it can estimate the activation ranges. The values of these activation ranges are then embedded into the generated code. The kernels accept these values and quantize the activation at the runtime.
+The activation range, on the other hand, varies with the input values. For offline-quantization to work, we have to feed some sample input data to the quantization routine so that it can record the activation ranges. These recorded activation ranges are then embedded into the generated code. The kernels accept these values and quantize the activation at the runtime.
 
-The Python generator below provides randomly sampled inputs to the quantization routine.
+The following Python generator provides randomly sampled inputs to the quantization routine:
 ```python
 # representative data function
 num_calibration_steps = 128
@@ -249,31 +265,38 @@ tflm_keras_export(
     target='utensor',
 )
 ```
-The files under the `constant` and `models` folder should now be updated. Viewing the contents of the files will provide more intuition on how uTensor works.
+The files under the `constant` and `models` folder should now be updated. Please go ahead and explore the contents of these files. They will lend you more insights on how uTensor works.
 
 ## Device Code
-The [main.cpp](https://github.com/uTensor/utensor-helloworld/blob/master/main.cpp) serves as a template on how to invoke a uTensor model.
+The [main.cpp](https://github.com/uTensor/utensor-helloworld/blob/master/main.cpp) serves as a skeleton file on how to invoke a uTensor model.
+
+[gist]
+
 ### Initializing the Model
 We first have to instantize the generated model:
 ```cpp
 static My_model model;
 ```
-The `My_model` class is generated from our trained model, and its name is set by the `model_name='my_model'` provided to the one-line export API mentioned in the previous section.
+The `My_model` class is generated from our trained model, and its name is set by the `model_name='my_model'` argument provided to the one-line export API.
 
 The `My_model` class is responsible for:
 - [Operator registration](https://github.com/uTensor/utensor-helloworld/blob/0165cfe51b3ae08de26d0bb189f53942414abfe3/models/my_model/my_model.hpp#L8-L35)
-- [Initalizing memory allocators with predetermined RAM usage](https://github.com/uTensor/utensor-helloworld/blob/0165cfe51b3ae08de26d0bb189f53942414abfe3/models/my_model/my_model.hpp#L33-L34)
+- [Initalizing memory allocators with pre-determined RAM usage](https://github.com/uTensor/utensor-helloworld/blob/0165cfe51b3ae08de26d0bb189f53942414abfe3/models/my_model/my_model.hpp#L33-L34)
 - [Implementation of the model](https://github.com/uTensor/utensor-helloworld/blob/master/models/my_model/my_model.cpp)
 ### Working with Tensors
-Once we have the model object, we need to create tensors to pass in the input and store the output. Here, we have two types of tensors:
-- `RomTensor` contains a read-only pointer to data. It points to the input data, `arr_input_image`, defined in the [input_image.h](https://github.com/uTensor/utensor-helloworld/blob/0165cfe51b3ae08de26d0bb189f53942414abfe3/input_image.h#L2). 
+We need to create tensors to pass data into and out of the model. Here, we use two types of tensors:
+- `RomTensor` contains a read-only pointer to data. It points to the input data, `arr_input_image`, defined in the [input_image.h](https://github.com/uTensor/utensor-helloworld/blob/0165cfe51b3ae08de26d0bb189f53942414abfe3/input_image.h#L2). This type of tensor typically represent data stored in the flash memory (ROM).
 - `RamTensor` represents data in RAM.
 
-All tensor types require us to specify shapes and data types.
+All tensor types require us to specify shapes and data types. For example:
 ```cpp
   Tensor input_image = new RomTensor({1, 28, 28, 1}, flt, arr_input_image);
   Tensor logits = new RamTensor({1, 10}, flt);
 ```
+The `input_image` is our input tensor. It is a floating point tensor and has a shape of `{1, 28, 28, 1}`. Contain data pointed to by the `arr_input_image` pointer.
+
+The `logits` tensor is our output tensor. It is a floating point tensor of shape `{1, 10}`.
+
 The tensor values can be read and written by specifying the indexi and data type:
 #### Read
 ```cpp
@@ -283,38 +306,23 @@ float pixel_value = static_cast<float>(input_image(0, 1, 1, 0));
 ```cpp
 input_image(0, 1, 1, 0) = static_cast<float>(1.234f);
 ```
+For more information on tensors, please check out the [TensorInterface](https://github.com/uTensor/uTensor/blob/d0a285a9ef03c419b80ccf364bda31e225aec1a1/src/uTensor/core/tensorBase.hpp#L36-L57).
+
 ### Running the Model
-The code that invokes the model is:
+To run the model, we have to set the input and output tensors, and, call the `eval()` method:
 ```cpp
 model.set_inputs({{My_model::input_0, input_image}})
     .set_outputs({{My_model::output_0, logits}})
     .eval();
 ```
-The `set_inputs()` and `set_outputs()` methods bind the input and output tensors to the model respectively. The input and output names of the generated model can be seem in its [header file](https://github.com/uTensor/utensor-helloworld/blob/0165cfe51b3ae08de26d0bb189f53942414abfe3/models/my_model/my_model.hpp#L11-L12). In this case, they are `input_0` and `output_0` as shown in the code snippet above.
+The `set_inputs()` and `set_outputs()` methods bind the input and output tensors to the model respectively. The input and output names of the generated model can be viewed in its [header file](https://github.com/uTensor/utensor-helloworld/blob/0165cfe51b3ae08de26d0bb189f53942414abfe3/models/my_model/my_model.hpp#L11-L12). In this case, they are `input_0` and `output_0` as shown in the code snippet above.
 
-After invoking the `eval()` on the model, the output tensor, `logits` contains the inference result. As an example, an `argmax()` function can be implemented with:
-```cpp
-int argmax(const Tensor &logits) {
-  uint32_t num_elems = logits->num_elems();
-  float max_value = static_cast<float>(logits(0));
-  int max_index = 0;
-  for (int i = 1; i < num_elems; ++i) {
-    float value = static_cast<float>(logits(i));
-    if (value >= max_value) {
-      max_value = value;
-      max_index = i;
-    }
-  }
-  return max_index;
-}
-
-int max_index = argmax(logits);
-```
+After calling the `eval()` method on the model, the output tensor, `logits` contains the inference result. You may wish to check out the [argmax()](https://github.com/uTensor/utensor-helloworld/blob/0165cfe51b3ae08de26d0bb189f53942414abfe3/main.cpp#L13-L25) function for more example on how tensors are accessed.
 
 ## Deployment
-We will mostly use Mbed-CLI for this section. It provide a simple-to-use wrapper to our cross-compiler, package manager, flash, and serial communication functions.
+Mbed-CLI is the primary tool used in this section. It is a fusion of a cross-compiler, package manager, flash programmer, and serial communicator.
 
-The `.lib` files in the repository contains references to libraries on Github. Mbed-CLI uses these references to download the corresponding source code when it deploys the project.
+The `.lib` files contain references to libraries on Github. Mbed-CLI uses these references to download the required source code when it deploys the project.
 
 ### Compile and Flash
 Connect your Mbed enabled board to your computer, then:
@@ -357,10 +365,12 @@ Image: ./BUILD/K64F/GCC_ARM/utensor-helloworld.bin
 Simple MNIST end-to-end uTensor cli example (device)
 pred label: 7
 ```
+Our input data in [input_image.h](https://github.com/uTensor/utensor-helloworld/blob/0165cfe51b3ae08de26d0bb189f53942414abfe3/input_image.h#L2) actually contains an hand-written digit `7`. Thus, we see the output above shows `pred label: 7`.
+
 Press `ctrl + c` to disconnect the serial terminal.
 
 Notice code size of uTensor:
-```
+```bash
 | uTensor/src      |   6031(+0) |    0(+0) |    36(+0) |
 ```
 The uTensor core and all the operators required to run a convolutional neural network contribute to less than **6kB** in terms of binary size.
