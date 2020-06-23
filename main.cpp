@@ -1,7 +1,6 @@
 #include <stdio.h>
 
 #include <cmath>
-#include <iostream>
 
 #include "input_image.h"  //contains the first sample taken from the MNIST test set
 #include "mbed.h"
