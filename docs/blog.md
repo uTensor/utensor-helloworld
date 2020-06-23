@@ -1,16 +1,5 @@
 # TinyML via Code Generation
 
-## Table of Content
-- Introduction
-- Requirements
-- Environment Setup
-- Sample Project
-- Model Creation and Code Generation
-- Device Code
-- Deployment
-
-# Introduction
-
  In an earlier post, I discussed some motivations of why we created uTensor to bring ML to MCUs. There are currently three ways to deploy ML models to MCUs: Interpreter, Code-Generation, and Compiler. They each have their trade-offs:
 
  - Memory Usage
@@ -90,7 +79,7 @@ Python 3.6.8
   (ut) $
   ```
   Now, whenever you type `ut`, the virtual environment will be activated. To exit the virtual environment, type `deactivate`.
-### Install uTensor-CLI and Jupyter
+#### Install uTensor-CLI and Jupyter
 The `ut` virtual environment is empty. We now install uTensor-CLI and Jupyter-notebook to it. Please note that we are not explicitly installing TensorFlow here as it comes with the installation of uTensor-CLI.
 
 Ensure you are in the `ut` virtual environment and type:
@@ -137,20 +126,16 @@ Here's the content of the repository:
 ```
 The Jupyter-notebook, [`mnist_conv.ipynb`](https://github.com/uTensor/utensor-helloworld/blob/master/mnist_conv.ipynb), hosts the training code and uses the uTensor API, which generates C++ code from the trained model. For simplicity, the project already contains the generated C++ code in the `constant` and `models` folders, so they are ready to be compiled. These pre-generated code will be overwritten after you run the notebook in the next section.
 
-## Model Creation and Code Generation
+
+
+## Model Creation
+In this writing, we will only discuss the code specific to the model architecture and uTensor. The full notebook can be viewed online [here](https://github.com/uTensor/utensor-helloworld/blob/master/mnist_conv.ipynb), and it is easily modifiable to suit your application.
+
 The Jupyter-notebook is launched from the project root:
 ```bash
 (ut) $ jupyter-notebook mnist_conv.ipynb &
 ```
-The above command should open a browser window of the notebook. Run the notebook by selecting `Kernel` > `Restart & Run All` from its dropdown menu:
-
-[img]
-
-In this writing, we will only discuss the code specific to the model architecture and uTensor. The full notebook can be viewed online [here](https://github.com/uTensor/utensor-helloworld/blob/master/mnist_conv.ipynb), and it is easily modifiable to suit your application.
-
-### Model Creation
-
-#### Defining the Model
+### Defining the Model
 We defined a convulutional neural network with less than 5kB (after quantization) of parameters:
 ```python
 class MyModel(Model):
@@ -177,51 +162,14 @@ The network above is a good starting point for 2D datasets, though, you may cons
 ```python
 x0 = self.pool(x)
 ```
- As you tweak the model architecture, pay attention not only to the accuracy of the model, but also the model parameter size.
-
-#### Model Size and RAM Estimation
-Oftentimes, a model's size and RAM usage can be estimated from the model architecture itself. Here's a helper function that prints the model parameters given the input shape:
-```python
-def print_model_summary(model, input_shape):
-  input_shape_nobatch = input_shape[1:]
-  model.build(input_shape)
-  inputs = tf.keras.Input(shape=input_shape_nobatch)
-  
-  if not hasattr(model, 'call'):
-      raise AttributeError("User should define 'call' method in sub-class model!")
-  
-  _ = model.call(inputs)
-  model.summary()
-
-#providing the model and its input shape
-print_model_summary(model, x_test.shape)
-```
-Output:
-```
-Model: "my_model"
-_________________________________________________________________
-Layer (type)                 Output Shape              Param #   
-=================================================================
-conv2d (Conv2D)              (None, 12, 12, 8)         80        
-_________________________________________________________________
-max_pooling2d (MaxPooling2D) multiple                  0         
-_________________________________________________________________
-flatten (Flatten)            (None, 288)               0         
-_________________________________________________________________
-dense (Dense)                (None, 16)                4624      
-_________________________________________________________________
-dense_1 (Dense)              (None, 10)                170       
-=================================================================
-Total params: 4,874
-Trainable params: 4,874
-Non-trainable params: 0
-```
-The total number of parameters is around 4,874. Because model parameters are typically constants for inferencing's consideration, they are stored in the ROM of your device.
-
-Activations, on the other hand, may change through every inference cycle; thus, they are placed in RAM. For sequential model, a simple metric to estimate the RAM usage is by looking the combined size of the input and output of a layer at a given time.
+ As you tweak the model architecture, pay attention not only to the accuracy of the model, but also the model parameter size. For more details, please refer to the [model size estimation](#model-size-and-ram-estimation) section.
 
 
-#### Training
+### Training
+The above command should open a browser window of the notebook. Run the notebook by selecting `Kernel` > `Restart & Run All` from its dropdown menu:
+
+[img]
+
 The training will run-through 15 epoch                                                                                                                    s. You should see output similar to this:
 ```
 Epoch 1, Loss: 0.459749698638916, Accuracy: 86.40333557128906, Test Loss: 0.18603216111660004, Test Accuracy: 94.27000427246094
@@ -231,30 +179,13 @@ Epoch 2, Loss: 0.1707976907491684, Accuracy: 94.72833251953125, Test Loss: 0.136
                                 .
 Epoch 15, Loss: 0.06735269725322723, Accuracy: 97.87333679199219, Test Loss: 0.08755753189325333, Test Accuracy: 97.13999938964844
 ```
-### Code Generation
-#### Offline Quantization
-Offline-quantization is a powerful way to reduce the memory requirement while running models on MCUs. It works by mapping 32-bit floating-point number to 8-bit fix-point representation, reducing the memory footprint by about 4x.
-
-Quantization is often applied in a per-tensor-dimension basis, and it requires us to know the full range of the dimension. A typical evaluation of a neural network layer consists of model parameters, inputs, and activations. Estimating the ranges of model parameters is straight forward because they are typically constants.
-
-The activation range, on the other hand, varies with the input values. For offline-quantization to work, we have to feed some sample input data to the quantization routine so that it can record the activation ranges. These recorded activation ranges are then embedded into the generated code. The kernels accept these values and quantize the activation at the runtime.
-
-The following Python generator provides randomly sampled inputs to the quantization routine:
-```python
-# representative data function
-num_calibration_steps = 128
-calibration_dtype = tf.float32
-
-def representative_dataset_gen():
-    for _ in range(num_calibration_steps):
-        rand_idx = np.random.randint(0, x_test.shape[0]-1)
-        sample = x_test[rand_idx]
-        sample = sample[tf.newaxis, ...]
-        sample = tf.cast(sample, dtype=calibration_dtype)
-        yield [sample]
-```
-#### uTensor One-Liner Export API
-With the trained model and its representative dataset generator, uTensor can generate the C++ implementation of the model by invoking:
+## Code Generation
+For uTensor to generate the C++ code, we need to provide a few argument to the export API:
+- `model`: a trained Keras model object
+- `representive_dataset`: a generate that samples from input datasets. It is used to estimate the appropriate quantization parameters for a model. Please refer to the [quantization section](#offline-quantization).
+- `model_name`: the export name of the model
+- `target`: we use 'utensor' here, more targets will be added.
+uTensor can generate C++ source code from a trained model with a one-liner:
 ```python
 from utensor_cgen.api.export import tflm_keras_export
 
@@ -265,6 +196,8 @@ tflm_keras_export(
     target='utensor',
 )
 ```
+The above
+
 The files under the `constant` and `models` folder should now be updated. Please go ahead and explore the contents of these files. They will lend you more insights on how uTensor works.
 
 ## Device Code
@@ -375,4 +308,65 @@ Notice code size of uTensor:
 ```
 The uTensor core and all the operators required to run a convolutional neural network contribute to less than **6kB** in terms of binary size.
  
-...
+## Offline Quantization
+Offline-quantization is a powerful way to reduce the memory requirement while running models on MCUs. It works by mapping 32-bit floating-point number to 8-bit fix-point representation, reducing the memory footprint by about 4x.
+
+Quantization is often applied in a per-tensor-dimension basis, and it requires us to know the full range of the dimension. A typical evaluation of a neural network layer consists of model parameters, inputs, and activations. Estimating the ranges of model parameters is straight forward because they are typically constants.
+
+The activation range, on the other hand, varies with the input values. For offline-quantization to work, we have to feed some sample input data to the quantization routine so that it can record the activation ranges. These recorded activation ranges are then embedded into the generated code. The kernels accept these values and quantize the activation at the runtime.
+
+The following Python generator provides randomly sampled inputs to the quantization routine:
+```python
+# representative data function
+num_calibration_steps = 128
+calibration_dtype = tf.float32
+
+def representative_dataset_gen():
+    for _ in range(num_calibration_steps):
+        rand_idx = np.random.randint(0, x_test.shape[0]-1)
+        sample = x_test[rand_idx]
+        sample = sample[tf.newaxis, ...]
+        sample = tf.cast(sample, dtype=calibration_dtype)
+        yield [sample]
+```
+
+## Model Size and RAM Estimation
+Oftentimes, a model's size and RAM usage can be estimated from the model architecture itself. Here's a helper function that prints the model parameters given the input shape:
+```python
+def print_model_summary(model, input_shape):
+  input_shape_nobatch = input_shape[1:]
+  model.build(input_shape)
+  inputs = tf.keras.Input(shape=input_shape_nobatch)
+  
+  if not hasattr(model, 'call'):
+      raise AttributeError("User should define 'call' method in sub-class model!")
+  
+  _ = model.call(inputs)
+  model.summary()
+
+#providing the model and its input shape
+print_model_summary(model, x_test.shape)
+```
+Output:
+```
+Model: "my_model"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+conv2d (Conv2D)              (None, 12, 12, 8)         80        
+_________________________________________________________________
+max_pooling2d (MaxPooling2D) multiple                  0         
+_________________________________________________________________
+flatten (Flatten)            (None, 288)               0         
+_________________________________________________________________
+dense (Dense)                (None, 16)                4624      
+_________________________________________________________________
+dense_1 (Dense)              (None, 10)                170       
+=================================================================
+Total params: 4,874
+Trainable params: 4,874
+Non-trainable params: 0
+```
+The total number of parameters is around 4,874. Because model parameters are typically constants for inferencing's consideration, they are stored in the ROM of your device.
+
+Activations, on the other hand, may change through every inference cycle; thus, they are placed in RAM. For sequential model, a simple metric to estimate the RAM usage is by looking the combined size of the input and output of a layer at a given time.
