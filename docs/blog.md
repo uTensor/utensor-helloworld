@@ -33,18 +33,17 @@
 ## Environment Setup
 This tutorial focus on the instructions for MacOS; however, other operating systems follow very similar steps.
 
-Brew is a user-space package manager for MacOS. It has a one-liner installer:
-
 ### Install Brew
+Brew is a user-space package manager for MacOS. In the terminal, enter:
 ```bash
 $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 ```
 Other systems use different package managers, for example, `apt` on Ubuntu Linux.
 
 ### Install and Setup Python
-We should never use the system's Python for our developments. We should create a Python virtual environment for our TinyML development instead. This is for system safety and to keep our Python dependency manageable. 
+We should never use the system's Python for our developments. Using a Python virtual environment for our TinyML development is a better practice. A dedicated Python environment to protects the system's Python and to keep our package dependencies manageable.
 #### Install [`pyenv`](https://github.com/pyenv/pyenv)
-  `pyenv` is a nice software that makes switching between different versions of Python runtime frictionless. It is installed with:
+  `pyenv` is a nice software that makes switching between versions of Python runtime frictionless. It is installed with:
   ```bash
   $ brew update
   $ brew install pyenv
@@ -56,11 +55,11 @@ We should never use the system's Python for our developments. We should create a
   $ echo 'if command -v pyenv 1>/dev/null 2>&1; then  eval "$(pyenv init -)"; fi' >> ~/.zshrc
   $ source ~/.zshrc
   ```
-  Show all Python versions avaliable to us:
+  View all Python versions avaliable to us:
   ```bash
   $ pyenv install --list
   ```
-  Let's install `Python 3.6.8` and set it to our default Python:
+  Install `Python 3.6.8` and set it to our default Python:
   ```bash
   $ pyenv install 3.6.8
   $ pyenv global 3.6.8
@@ -77,10 +76,12 @@ Python 3.6.8
   # Activate it
   $ ut
   (ut) $
+  # to deactivate it:
+  # $ deactivate
   ```
   Now, whenever you type `ut`, the virtual environment will be activated. To exit the virtual environment, type `deactivate`.
 #### Install uTensor-CLI and Jupyter
-The `ut` virtual environment is empty. We now install uTensor-CLI and Jupyter-notebook to it. Please note that we are not explicitly installing TensorFlow here as it comes with the installation of uTensor-CLI.
+The `ut` is a newly created virtual environment; uTensor-CLI and Jupyter-notebook need to be installed. Please note that explicit TensorFlow installation is not required here as it is included in uTensor-CLI's installation.
 
 Ensure you are in the `ut` virtual environment and type:
 ```bash
@@ -129,7 +130,7 @@ The Jupyter-notebook, [`mnist_conv.ipynb`](https://github.com/uTensor/utensor-he
 
 
 ## Model Creation
-In this writing, we will only discuss the code specific to the model architecture and uTensor. The full notebook can be viewed online [here](https://github.com/uTensor/utensor-helloworld/blob/master/mnist_conv.ipynb), and it is easily modifiable to suit your application.
+Here, we will only discuss the code specific to the model architecture and uTensor. The full notebook can be [viewed online](https://github.com/uTensor/utensor-helloworld/blob/master/mnist_conv.ipynb). The code is easily modifiable to suit your application.
 
 The Jupyter-notebook is launched from the project root:
 ```bash
@@ -157,7 +158,7 @@ class MyModel(Model):
 
 model = MyModel()
 ```
-The network above is a good starting point for 2D datasets, though, you may consider removing the first pooling layer if you are to train this on your dataset:
+The network above is a good starting point for 2D datasets, though, it often makes sense to remove the first pooling layer for many datasets:
 
 ```python
 x0 = self.pool(x)
@@ -166,11 +167,11 @@ x0 = self.pool(x)
 
 
 ### Training
-The above command should open a browser window of the notebook. Run the notebook by selecting `Kernel` > `Restart & Run All` from its dropdown menu:
+The above command should lanuch a browser window showing the notebook. Run the notebook by selecting `Kernel` > `Restart & Run All` from its dropdown menu:
 
 [img]
 
-The training will run-through 15 epoch                                                                                                                    s. You should see output similar to this:
+The training will run-through 15 epochs. Look for the **Training Loop** header in the notebook; you should see output similar to this:
 ```
 Epoch 1, Loss: 0.459749698638916, Accuracy: 86.40333557128906, Test Loss: 0.18603216111660004, Test Accuracy: 94.27000427246094
 Epoch 2, Loss: 0.1707976907491684, Accuracy: 94.72833251953125, Test Loss: 0.13616280257701874, Test Accuracy: 95.6300048828125
@@ -180,7 +181,8 @@ Epoch 2, Loss: 0.1707976907491684, Accuracy: 94.72833251953125, Test Loss: 0.136
 Epoch 15, Loss: 0.06735269725322723, Accuracy: 97.87333679199219, Test Loss: 0.08755753189325333, Test Accuracy: 97.13999938964844
 ```
 ## Code Generation
-For uTensor to generate the C++ code, we need to provide a few argument to the export API:
+uTensor has a one-liner export API. A few arguments are required for it to generate C++ code:
+
 - `model`: a trained Keras model object
 - `representive_dataset`: a generate that samples from input datasets. It is used to estimate the appropriate quantization parameters for a model. Please refer to the [quantization section](#offline-quantization).
 - `model_name`: the export name of the model
@@ -196,13 +198,16 @@ tflm_keras_export(
     target='utensor',
 )
 ```
-The above function call will overwrite the files under the `constant` and `models` folder. Please go ahead and explore the contents of these files. They will lend you more insights on how uTensor works.
+The above function call will overwrite the files under the `constant` and `models` folder. Please go ahead and explore the contents of these files. They will lend you more insights into how uTensor works.
 
 ## Device Code
-The [main.cpp](https://github.com/uTensor/utensor-helloworld/blob/master/main.cpp) serves as a skeleton file on how to invoke a uTensor model.
+In the previous section, we have trained a CNN on MNIST and exported it using uTensor. Here, we are showing how to invoke the model from [main.cpp](https://github.com/uTensor/utensor-helloworld/blob/master/main.cpp). We are feeding a hand-written digit of `7` contained in [input_image.h](https://github.com/uTensor/utensor-helloworld/blob/0165cfe51b3ae08de26d0bb189f53942414abfe3/input_image.h#L2) into the model. A few steps are required to invoke an uTensor Model:
+- Initializing the Model
+- Creating Tensors
+- Setting Up Data
+- Running the Model
 
-[gist]
-
+For the complete source code, please refer to the [main.cpp](https://github.com/uTensor/utensor-helloworld/blob/master/main.cpp).
 ### Initializing the Model
 We first have to instantize the generated model:
 ```cpp
@@ -214,20 +219,24 @@ The `My_model` class is responsible for:
 - [Operator registration](https://github.com/uTensor/utensor-helloworld/blob/0165cfe51b3ae08de26d0bb189f53942414abfe3/models/my_model/my_model.hpp#L8-L35)
 - [Initalizing memory allocators with pre-determined RAM usage](https://github.com/uTensor/utensor-helloworld/blob/0165cfe51b3ae08de26d0bb189f53942414abfe3/models/my_model/my_model.hpp#L33-L34)
 - [Implementation of the model](https://github.com/uTensor/utensor-helloworld/blob/master/models/my_model/my_model.cpp)
-### Working with Tensors
-We need to create tensors to pass data into and out of the model. Here, we use two types of tensors:
-- `RomTensor` contains a read-only pointer to data. It points to the input data, `arr_input_image`, defined in the [input_image.h](https://github.com/uTensor/utensor-helloworld/blob/0165cfe51b3ae08de26d0bb189f53942414abfe3/input_image.h#L2). This type of tensor typically represent data stored in the flash memory (ROM).
-- `RamTensor` represents data in RAM.
-
-All tensor types require us to specify shapes and data types. For example:
+### Creating Tensors
+Input and output tensors need to be created to pass input data into the mode and store the model output. Shapes and data types need to be specified during tensor creations. For example:
 ```cpp
   Tensor input_image = new RomTensor({1, 28, 28, 1}, flt, arr_input_image);
-  Tensor logits = new RamTensor({1, 10}, flt);
 ```
-The `input_image` is our input tensor. It is a floating point tensor and has a shape of `{1, 28, 28, 1}`. Contain data pointed to by the `arr_input_image` pointer.
+The `input_image` tensor is our input tensor. It is a floating point tensor and has a shape of `{1, 28, 28, 1}`. Contain data pointed to by the `arr_input_image` pointer.
 
+```cpp
+Tensor logits = new RamTensor({1, 10}, flt);
+```
 The `logits` tensor is our output tensor. It is a floating point tensor of shape `{1, 10}`.
 
+In this example, we use two types of tensors:
+- `RomTensor`: a type of tensor class that represent data in the read-only region of the device, e.g. flash memory. It takes a pointer to read-only memory, `arr_input_image`, defined in the [input_image.h](https://github.com/uTensor/utensor-helloworld/blob/0165cfe51b3ae08de26d0bb189f53942414abfe3/input_image.h#L2).
+- `RamTensor`: a tensor class that represents data in RAM.
+
+
+### Setting Up Data
 The tensor values can be read and written by specifying the indexi and data type:
 #### Read
 ```cpp
@@ -237,7 +246,10 @@ float pixel_value = static_cast<float>(input_image(0, 1, 1, 0));
 ```cpp
 input_image(0, 1, 1, 0) = static_cast<float>(1.234f);
 ```
-For more information on tensors, please check out the [TensorInterface](https://github.com/uTensor/uTensor/blob/d0a285a9ef03c419b80ccf364bda31e225aec1a1/src/uTensor/core/tensorBase.hpp#L36-L57).
+
+
+
+For more details on tensors, please check out the [TensorInterface](https://github.com/uTensor/uTensor/blob/d0a285a9ef03c419b80ccf364bda31e225aec1a1/src/uTensor/core/tensorBase.hpp#L36-L57).
 
 ### Running the Model
 To run the model, we have to set the input and output tensors, and, call the `eval()` method:
