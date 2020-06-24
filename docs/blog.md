@@ -125,7 +125,7 @@ Here's the content of the repository:
 │       └── my_model.hpp
 └── uTensor.lib
 ```
-The Jupyter-notebook, [`mnist_conv.ipynb`](https://github.com/uTensor/utensor-helloworld/blob/master/mnist_conv.ipynb), hosts the training code and uses the uTensor API, which generates C++ code from the trained model. For simplicity, the project already contains the generated C++ code in the `constant` and `models` folders, so they are ready to be compiled. These pre-generated code will be overwritten after you run the notebook in the next section.
+The Jupyter-notebook, [mnist_conv.ipynb](https://github.com/uTensor/utensor-helloworld/blob/master/mnist_conv.ipynb), hosts the training code and uses the uTensor API, which generates C++ code from the trained model. For simplicity, the project already contains the generated C++ code in the `constant` and `models` folders, so they are ready to be compiled. These pre-generated code will be overwritten after you run the notebook in the next section.
 
 
 
@@ -169,9 +169,9 @@ x0 = self.pool(x)
 ### Training
 The above command should lanuch a browser window showing the notebook. Run the notebook by selecting `Kernel` > `Restart & Run All` from its dropdown menu:
 
-[img]
+![alt text](img/jupyter_run.png "Running Jupyter Notebook")
 
-The training will run-through 15 epochs. Look for the **Training Loop** header in the notebook; you should see output similar to this:
+The training will run-through 15 epochs. Scroll down the notebook and look for the **Training Loop** header; you should see similar output:
 ```
 Epoch 1, Loss: 0.459749698638916, Accuracy: 86.40333557128906, Test Loss: 0.18603216111660004, Test Accuracy: 94.27000427246094
 Epoch 2, Loss: 0.1707976907491684, Accuracy: 94.72833251953125, Test Loss: 0.13616280257701874, Test Accuracy: 95.6300048828125
@@ -198,14 +198,21 @@ tflm_keras_export(
     target='utensor',
 )
 ```
-The above function call will overwrite the files under the `constant` and `models` folder. Please go ahead and explore the contents of these files. They will lend you more insights into how uTensor works.
+The above function call will overwrite the files under the `constant` and `models` folder:
+```
+...
+[INFO _code_generator.py _time_slot_generate_files @ 248] model parameters header file generated: constants/my_model/params_my_model.hpp
+[INFO _code_generator.py _time_slot_generate_files @ 268] model header file generated: models/my_model/my_model.hpp
+[INFO _code_generator.py _time_slot_generate_files @ 287] model cpp file generated: models/my_model/my_model.cpp
+```
+Please go ahead and explore the contents of these files. They will lend you more insights into how uTensor works.
 
 ## Device Code
-In the previous section, we have trained a CNN on MNIST and exported it using uTensor. Here, we are showing how to invoke the model from [main.cpp](https://github.com/uTensor/utensor-helloworld/blob/master/main.cpp). We are feeding a hand-written digit of `7` contained in [input_image.h](https://github.com/uTensor/utensor-helloworld/blob/0165cfe51b3ae08de26d0bb189f53942414abfe3/input_image.h#L2) into the model. A few steps are required to invoke an uTensor Model:
-- Initializing the Model
-- Creating Tensors
-- Setting Up Data
-- Running the Model
+In the previous section, we have trained a CNN on MNIST and exported it using uTensor. Here, we are showing how to invoke the model from [main.cpp](https://github.com/uTensor/utensor-helloworld/blob/master/main.cpp). We are feeding a hand-written digit of `7` contained in [input_image.h](https://github.com/uTensor/utensor-helloworld/blob/0165cfe51b3ae08de26d0bb189f53942414abfe3/input_image.h#L2) into the model, but you can change it to take data from other sources. A few steps are required to invoke an uTensor Model:
+- [Initializing the Model](#initializing-the-model)
+- [Creating Tensors](#creating-tensors)
+- [Setting Up Data](#setting-up-data)
+- [Running the Model](#running-the-model)
 
 For the complete source code, please refer to the [main.cpp](https://github.com/uTensor/utensor-helloworld/blob/master/main.cpp).
 ### Initializing the Model
@@ -224,7 +231,7 @@ Input and output tensors need to be created to pass input data into the mode and
 ```cpp
   Tensor input_image = new RomTensor({1, 28, 28, 1}, flt, arr_input_image);
 ```
-The `input_image` tensor is our input tensor. It is a floating point tensor and has a shape of `{1, 28, 28, 1}`. Contain data pointed to by the `arr_input_image` pointer.
+The `input_image` tensor is our input tensor. The `flt` indicates it is of type `float` and has a `shape` of `{1, 28, 28, 1}`. It contains data pointed to by the `arr_input_image` pointer.
 
 ```cpp
 Tensor logits = new RamTensor({1, 10}, flt);
@@ -235,6 +242,7 @@ In this example, we use two types of tensors:
 - `RomTensor`: a type of tensor class that represent data in the read-only region of the device, e.g. flash memory. It takes a pointer to read-only memory, `arr_input_image`, defined in the [input_image.h](https://github.com/uTensor/utensor-helloworld/blob/0165cfe51b3ae08de26d0bb189f53942414abfe3/input_image.h#L2).
 - `RamTensor`: a tensor class that represents data in RAM.
 
+For more details on tensors, please check out the [TensorInterface](https://github.com/uTensor/uTensor/blob/d0a285a9ef03c419b80ccf364bda31e225aec1a1/src/uTensor/core/tensorBase.hpp#L36-L57).
 
 ### Setting Up Data
 The tensor values can be read and written by specifying the indexi and data type:
@@ -246,10 +254,6 @@ float pixel_value = static_cast<float>(input_image(0, 1, 1, 0));
 ```cpp
 input_image(0, 1, 1, 0) = static_cast<float>(1.234f);
 ```
-
-
-
-For more details on tensors, please check out the [TensorInterface](https://github.com/uTensor/uTensor/blob/d0a285a9ef03c419b80ccf364bda31e225aec1a1/src/uTensor/core/tensorBase.hpp#L36-L57).
 
 ### Running the Model
 To run the model, we have to set the input and output tensors, and, call the `eval()` method:
@@ -325,7 +329,7 @@ Quantization is often applied in a per-tensor-dimension basis, and it requires u
 
 The activation range, on the other hand, varies with the input values. For offline-quantization to work, we have to feed some sample input data to the quantization routine so that it can record the activation ranges. These recorded activation ranges are then embedded into the generated code. The kernels accept these values and quantize the activation at the runtime.
 
-The following Python generator provides randomly sampled inputs to the quantization routine:
+The following Python generator from [mnist_conv.ipynb](https://github.com/uTensor/utensor-helloworld/blob/master/mnist_conv.ipynb) provides randomly sampled inputs to the quantization routine:
 ```python
 # representative data function
 num_calibration_steps = 128
