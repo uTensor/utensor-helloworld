@@ -66,26 +66,35 @@ We should never use the system's Python for our developments. Using a Python vir
   $ python --version
 Python 3.6.8
   ```
-  Create a Python Virtual Environment for TinyML
+  Create a Python Virtual Environment named `ut` for TinyML
   ```bash
   $ mkdir ~/.pyvenv
   $ python -m venv ~/.pyvenv/ut
   # Add it to shell
   $ echo 'alias ut="source ~/.pyvenv/ut/bin/activate"' >> ~/.zshrc
   $ source ~/.zshrc
+  ```
+Activating and de-activating a virtual environment:
+  ```
   # Activate it
   $ ut
   (ut) $
+
   # to deactivate it:
-  # $ deactivate
+  (ut) $ deactivate
+  $
   ```
   Now, whenever you type `ut`, the virtual environment will be activated. To exit the virtual environment, type `deactivate`.
 #### Install uTensor-CLI and Jupyter
 The `ut` is a newly created virtual environment; uTensor-CLI and Jupyter-notebook need to be installed. Please note that explicit TensorFlow installation is not required here as it is included in uTensor-CLI's installation.
 
-Ensure you are in the `ut` virtual environment and type:
+Ensure you are performing the installation in the virtual environment:
 ```bash
-(ut) $ pip install utensor_cgen jupyter
+$ ut
+(ut) $ pip install utensor_cgen jupyterlab
+# link the current virtual environment with Jupyter
+(ut) $ pip install ipykernel
+(ut) $ ipython kernel install --user --name=ut
 ```
 ### Mbed-CLI Installation
 Installing the dependencies for [Mbed-CLI](https://os.mbed.com/docs/mbed-os/v6.0/quick-start/build-with-mbed-cli.html) with Brew. You may skip them if they are already installed on your system (git, mercurial, and Arm cross-compiler).
