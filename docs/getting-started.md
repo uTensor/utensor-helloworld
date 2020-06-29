@@ -1,29 +1,14 @@
 # TinyML via Code Generation
 
- In an earlier post, I discussed some motivations of why we created uTensor to bring ML to MCUs. There are currently three ways to deploy ML models to MCUs: Interpreter, Code-Generation, and Compiler. They all have their unique trade-offs:
-
- - Memory Efficiency
- - Code Size Efficiency
- - Speed
- - Workflow
- - Extensibility
-
-The plot below attempts to illustrate the pros and cons of the three approaches:
-
-![alt text](img/TinyML_Tradeoffs.jpeg "TinyML Trade-offs")
-
   uTensor uses a code-generation approach where C++ code is generated from a trained model. The generated code is easily integrated with embedded projects:
 
 ![alt text](https://github.com/uTensor/uTensor/raw/master/docs/img/uTensorFlow.jpg "flow graph")
-  
   
   uTensor is as small as 2kB. It supports multiple memory planning strategies and integrates well with optimized computational kernels, for example, CMSIS-NN from Arm. The uTensor C++ runtime interfaces are clear and designed specific for embedded ML. The uTensor Python SDK is designed for customizability from the ground up. Hardware and software designers can take advantage of the extensbility uTensor offers to prototype and deploy their solutions.
 
   We find the code-generation is a good balance weighting all the trade-offs above. 
 
   The rest of the tutorial presents the steps to set up your environment and deploy your first model with uTensor.
-
-%mbed blog: old features of uTensor + new additions
 
 ## Requirements
 - Brew (for MacOS)
@@ -150,6 +135,10 @@ The Jupyter-notebook is launched from the project root:
 ```bash
 (ut) $ jupyter-notebook mnist_conv.ipynb &
 ```
+Once the notebook is launched, set the kernel by choosing `Kernel` > `Change Kernel` > `ut`:
+
+![alt text](img/jupyter_kernel.png "Setting Jupyter Kernel")
+
 ### Defining the Model
 We defined a convulutional neural network with less than 5kB (after quantization) of parameters:
 ```python
@@ -398,3 +387,12 @@ Non-trainable params: 0
 The total number of parameters is around 4,874. Because model parameters are typically constants for inferencing's consideration, they are stored in the ROM of your device.
 
 Activations, on the other hand, may change through every inference cycle; thus, they are placed in RAM. For sequential model, a simple metric to estimate the RAM usage is by looking the combined size of the input and output of a layer at a given time.
+
+## Conclusion
+Congratulation on completing this example. This tutorial covers quite a bit of information and is quite advanced. Stay tuned for more writings on TinyML to come. We will be bringing you content on not only the deployment of embedded ML models but also how to extend uTensor to do exactly what you want, such as node-fusion, adding operators, custom memory plans, data collection, etc.
+
+Also, there are many ways you can help the project, for example:
+#### Star the Projects
+[Starring the project](https://github.com/uTensor/uTensor) is a great way to recognize our work and support the community. Please help us to spread the words!
+#### Join us on Slack
+Our [Slack workspace](https://join.slack.com/t/utensor/shared_invite/zt-6vf9jocy-lzk5Aw11Z8M9GPf_KS5I~Q) is full of discussions on the latest ideas and development in uTensor. If you have questions, ideas, or want to get involved in the project, Slack is a great place to start.

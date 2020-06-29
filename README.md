@@ -1,8 +1,8 @@
-# uTensor Hello World Repository (Preview)
-This is a quick end-to-end, training-to-deployment, uTensor tutorial.
+# uTensor Hello World Repository
+This is an end-to-end, training-to-deployment, uTensor jump-start guide.
 Although, the [K64F](https://os.mbed.com/platforms/FRDM-K64F/) is used in this tutorial, any Mbed enabled board should work.
 
-This is a project **PREVIEW**. More updates and tutorials will be released. Please give us your feedback in the mean time.
+**Please refer to the [getting-started tutorial](docs/getting-started.md) more detailed instructions and explanations of the steps.**
 
 ## What's New with uTensor
 - TF2 Support
@@ -73,7 +73,9 @@ You will need Jupyter-notebook and utensor-cli to be installed under the same Py
 ```bash
 $ jupyter notebook mnist_conv.ipynb
 ```
-Select the `ut` kernel and run through all the cells, the generated code and parameters are placed in the `models` and `constant` folders.
+In the Jupyter notebook, set the `ut` kernel by choosing `Kernel` > `Change Kernel` > `ut`. Then, run through all the cells, the generated code and parameters are placed in the `models` and `constant` folders:
+
+![alt text](docs/img/jupyter_run.png "Running Jupyter Notebook")
 
 In the example notebook, two pieces of code that are specific to uTensor:
 - Representative Dataset Generator
