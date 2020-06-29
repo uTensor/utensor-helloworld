@@ -1,8 +1,8 @@
-# uTensor Hello World Repository (Preview)
-This is a quick end-to-end, training-to-deployment, uTensor tutorial.
+# uTensor Hello World Repository
+This is an end-to-end, training-to-deployment, uTensor jump-start guide.
 Although, the [K64F](https://os.mbed.com/platforms/FRDM-K64F/) is used in this tutorial, any Mbed enabled board should work.
 
-This is a project **PREVIEW**. More updates and tutorials will be released. Please give us your feedback in the mean time.
+**Please refer to the [getting-started tutorial](docs/getting-started.md) more detailed instructions and explanations of the steps.**
 
 ## What's New with uTensor
 - TF2 Support
@@ -48,10 +48,13 @@ For installations on other platforms, please visit [Mbed-CLI's installation page
 #### `uTensor-cli` Installation
 The latest stable uTensor-SDK can be installed with `pip`. It also include a nice command-line interface.
 ```bash
-$ pip install utensor-cgen jupyter
+$ pip install utensor-cgen jupyterlab
+# link the current Python runtime with Jupyter, calling it `ut`
+$ pip install ipykernel
+$ ipython kernel install --user --name=ut
 ```
 
-### Installation with `pipenv`
+### Installation with `pipenv` (Alternative)
 
 Alternately, if [`pipenv`](https://github.com/pypa/pipenv) is available on your machine, you can install everything above with:
 
@@ -68,9 +71,11 @@ The sample project should already include the generated model code and is ready 
 
 You will need Jupyter-notebook and utensor-cli to be installed under the same Python virtual environment to run the code, from the project root:
 ```bash
-$ jupyter-notebook mnist_conv.ipynb
+$ jupyter notebook mnist_conv.ipynb
 ```
-Run through all the cells, the generated code and parameters are placed in the `models` and `constant` folders.
+In the Jupyter notebook, set the `ut` kernel by choosing `Kernel` > `Change Kernel` > `ut`. Then, run through all the cells, the generated code and parameters are placed in the `models` and `constant` folders:
+
+![alt text](docs/img/jupyter_run.png "Running Jupyter Notebook")
 
 In the example notebook, two pieces of code that are specific to uTensor:
 - Representative Dataset Generator
