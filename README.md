@@ -2,7 +2,8 @@
 This is an end-to-end, training-to-deployment, uTensor jump-start guide.
 Although, the [K64F](https://os.mbed.com/platforms/FRDM-K64F/) is used in this tutorial, any Mbed enabled board should work.
 
-**Please refer to the [getting-started tutorial](docs/getting-started.md) more detailed instructions and explanations of the steps.**
+> **Note**  
+> Please refer to this **[getting-started tutorial](docs/getting-started.md)** more detailed instructions and explanations of the steps.
 
 ## What's New with uTensor
 - TF2 Support
@@ -56,7 +57,7 @@ $ ipython kernel install --user --name=ut
 
 ### Installation with `pipenv` (Alternative)
 
-Alternately, if [`pipenv`](https://github.com/pypa/pipenv) is available on your machine, you can install everything above with:
+Alternately, if you prefer [`pipenv`](https://github.com/pypa/pipenv), you can install everything above with:
 
 ```bash
 $ brew install arm-none-eabi-gcc #required by mbed-cli
