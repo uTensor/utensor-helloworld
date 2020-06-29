@@ -1,20 +1,25 @@
 # TinyML via Code Generation
 
- In an earlier post, I discussed some motivations of why we created uTensor to bring ML to MCUs. There are currently three ways to deploy ML models to MCUs: Interpreter, Code-Generation, and Compiler. They each have their trade-offs:
+ In an earlier post, I discussed some motivations of why we created uTensor to bring ML to MCUs. There are currently three ways to deploy ML models to MCUs: Interpreter, Code-Generation, and Compiler. They all have their unique trade-offs:
 
- - Memory Usage
- - Code Size
+ - Memory Efficiency
+ - Code Size Efficiency
  - Speed
- - Hackability
- - Workflow?
+ - Workflow
+ - Extensibility
 
-  uTensor uses a code-generation approach where C++ code is generated from a trained model. The generated code can be copied-and-pasted into embedded projects for easy integration:
+The plot below attempts to illustrate the pros and cons of the three approaches:
 
-  [flow graph]
+![alt text](img/TinyML_Tradeoffs.jpeg "TinyML Trade-offs")
+
+  uTensor uses a code-generation approach where C++ code is generated from a trained model. The generated code is easily integrated with embedded projects:
+
+![alt text](https://github.com/uTensor/uTensor/raw/master/docs/img/uTensorFlow.jpg "flow graph")
   
-  The code size contributes to uTensor's core is less than 2kB. It supports multiple memory planning strategies and integrates well with optimized computational kernels, for example, CMSIS-NN. Finally, its toolchain is written in pure Python enables one to prototype ideas with ease.
+  
+  uTensor is as small as 2kB. It supports multiple memory planning strategies and integrates well with optimized computational kernels, for example, CMSIS-NN from Arm. The uTensor C++ runtime interfaces are clear and designed specific for embedded ML. The uTensor Python SDK is designed for customizability from the ground up. Hardware and software designers can take advantage of the extensbility uTensor offers to prototype and deploy their solutions.
 
-  Weighting against all aspects of TinyML mentioned above, we find the best balance is having a code-generation approach with a super customizable toolchain.
+  We find the code-generation is a good balance weighting all the trade-offs above. 
 
   The rest of the tutorial presents the steps to set up your environment and deploy your first model with uTensor.
 
