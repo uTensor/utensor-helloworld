@@ -82,9 +82,6 @@ Ensure you are performing the installation in the virtual environment:
 ```bash
 $ ut
 (ut) $ pip install utensor_cgen jupyterlab
-# link the current virtual environment with Jupyter
-(ut) $ pip install ipykernel
-(ut) $ ipython kernel install --user --name=ut
 ```
 ### Mbed-CLI Installation
 Installing the dependencies for [Mbed-CLI](https://os.mbed.com/docs/mbed-os/v6.0/quick-start/build-with-mbed-cli.html) with Brew. You may skip them if they are already installed on your system (git, mercurial, and Arm cross-compiler).
@@ -133,11 +130,9 @@ Here, we will only discuss the code specific to the model architecture and uTens
 
 The Jupyter-notebook is launched from the project root:
 ```bash
+# Please make sure the virtual environment is active
 (ut) $ jupyter-notebook mnist_conv.ipynb &
 ```
-Once the notebook is launched, set the kernel by choosing `Kernel` > `Change Kernel` > `ut`:
-
-![alt text](img/jupyter_kernel.png "Setting Jupyter Kernel")
 
 ### Defining the Model
 We defined a convulutional neural network with less than 5kB (after quantization) of parameters:

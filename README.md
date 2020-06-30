@@ -54,9 +54,6 @@ For installations on other platforms, please visit [Mbed-CLI's installation page
 The latest stable uTensor-SDK can be installed with `pip`. It also include a nice command-line interface.
 ```bash
 $ pip install utensor-cgen jupyterlab
-# link the current Python runtime with Jupyter, calling it `ut`
-$ pip install ipykernel
-$ ipython kernel install --user --name=ut
 ```
 
 ### Installation with `pipenv` (Alternative)
@@ -78,7 +75,7 @@ You will need Jupyter-notebook and utensor-cli to be installed under the same Py
 ```bash
 $ jupyter notebook mnist_conv.ipynb
 ```
-In the Jupyter notebook, set the `ut` kernel by choosing `Kernel` > `Change Kernel` > `ut`. Then, run through all the cells, the generated code and parameters are placed in the `models` and `constant` folders:
+In the Jupyter notebook, run through all the cells, the generated code and parameters are placed in the `models` and `constant` folders:
 
 ![alt text](docs/img/jupyter_run.png "Running Jupyter Notebook")
 
