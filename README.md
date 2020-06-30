@@ -1,9 +1,13 @@
 # uTensor Hello World Repository
 This is an end-to-end, training-to-deployment, uTensor jump-start guide.
+
+This example trains a convolutional neural network on MNIST in Jupyter-notebook using Keras, converts the trained model to C++ via uTensor, and deploy it to a Mbed board. A header file containing data of hand-written digit of `7` used as the test data on-device.
+
 Although, the [K64F](https://os.mbed.com/platforms/FRDM-K64F/) is used in this tutorial, any Mbed enabled board should work.
 
 > **Note**  
-> For a more comprehensive guide, please refer to this **[getting-started tutorial](docs/getting-started.md)**. It covers environment set up and has code walk-through.
+> For a more comprehensive guide, please refer to this **[getting-started tutorial](docs/getting-started.md)**. It covers the environment set up and has code walk-throughs.
+
 
 ## What's New with uTensor
 - TF2 Support
