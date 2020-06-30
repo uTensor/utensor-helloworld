@@ -3,7 +3,7 @@ This is an end-to-end, training-to-deployment, uTensor jump-start guide.
 Although, the [K64F](https://os.mbed.com/platforms/FRDM-K64F/) is used in this tutorial, any Mbed enabled board should work.
 
 > **Note**  
-> Please refer to this **[getting-started tutorial](docs/getting-started.md)** more detailed instructions and explanations of the steps.
+> For a more comprehensive guide, please refer to this **[getting-started tutorial](docs/getting-started.md)**. It covers environment set up and has code walk-through.
 
 ## What's New with uTensor
 - TF2 Support
