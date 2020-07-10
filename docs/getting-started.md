@@ -4,9 +4,9 @@
 
 ![alt text](https://github.com/uTensor/uTensor/raw/master/docs/img/uTensorFlow.jpg "flow graph")
   
-  uTensor is as small as 2kB. It supports multiple memory planning strategies and integrates well with optimized computational kernels, for example, CMSIS-NN from Arm. The uTensor C++ runtime interfaces are clear and designed specific for embedded ML. The uTensor Python SDK is designed for customizability from the ground up. Hardware and software designers can take advantage of the extensbility uTensor offers to prototype and deploy their solutions.
+  uTensor is as small as 2kB. It supports multiple memory planning strategies and integrates well with optimized computational kernels, for example, CMSIS-NN from Arm. The uTensor C++ runtime interfaces are clear and designed specifically for embedded ML. The uTensor Python SDK is customizable from the ground up. Hardware and software designers can take advantage of the extensbility uTensor offers to prototype and deploy their solutions.
 
-  We find the code-generation is a good balance weighting all the trade-offs above. 
+  We find that code-generation is a good balance weighing all the trade-offs above. 
 
   The rest of the tutorial presents the steps to set up your environment and deploy your first model with uTensor.
 
@@ -21,7 +21,7 @@
 
 
 ## Environment Setup
-This tutorial focus on the instructions for MacOS; however, other operating systems follow very similar steps.
+This tutorial focuses on the instructions for MacOS; however other operating systems follow very similar steps.
 
 ### Install Brew
 Brew is a user-space package manager for MacOS. In the terminal, enter:
@@ -31,9 +31,9 @@ $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/
 Other systems use different package managers, for example, `apt` on Ubuntu Linux.
 
 ### Install and Setup Python
-We should never use the system's Python for our developments. Using a Python virtual environment for our TinyML development is a better practice. A dedicated Python environment to protects the system's Python and to keep our package dependencies manageable.
+Using a Python virtual environment for our TinyML development is good practice. A dedicated Python environment protects the system's Python and keeps our package dependencies manageable.
 #### Install [`pyenv`](https://github.com/pyenv/pyenv)
-  `pyenv` is a nice software that makes switching between versions of Python runtime frictionless. It is installed with:
+  `pyenv` is a nice tool that makes switching between versions of Python runtime frictionless. It is installed with:
   ```bash
   $ brew update
   $ brew install pyenv
@@ -64,7 +64,7 @@ Python 3.6.8
   $ echo 'alias ut="source ~/.pyvenv/ut/bin/activate"' >> ~/.zshrc
   $ source ~/.zshrc
   ```
-Activating and de-activating a virtual environment:
+Activate and de-activate a virtual environment:
   ```
   # Activate it
   $ ut
@@ -121,7 +121,7 @@ Here's the content of the repository:
 │       └── my_model.hpp
 └── uTensor.lib
 ```
-The Jupyter-notebook, [mnist_conv.ipynb](https://github.com/uTensor/utensor-helloworld/blob/master/mnist_conv.ipynb), hosts the training code and uses the uTensor API, which generates C++ code from the trained model. For simplicity, the project already contains the generated C++ code in the `constant` and `models` folders, so they are ready to be compiled. These pre-generated code will be overwritten after you run the notebook in the next section.
+The Jupyter notebook [mnist_conv.ipynb](https://github.com/uTensor/utensor-helloworld/blob/master/mnist_conv.ipynb) hosts the training code and uses the uTensor API to generate C++ code from the trained model. For simplicity, the project already contains the generated C++ code in the `constant` and `models` folders, so they are ready to be compiled. These pre-generated code will be overwritten after you run the notebook in the next section.
 
 
 
@@ -135,7 +135,7 @@ The Jupyter-notebook is launched from the project root:
 ```
 
 ### Defining the Model
-We defined a convulutional neural network with less than 5kB (after quantization) of parameters:
+We defined a convolutional neural network with less than 5kB (after quantization) of parameters:
 ```python
 class MyModel(Model):
   def __init__(self):
@@ -379,12 +379,12 @@ Total params: 4,874
 Trainable params: 4,874
 Non-trainable params: 0
 ```
-The total number of parameters is around 4,874. Because model parameters are typically constants for inferencing's consideration, they are stored in the ROM of your device.
+The total number of parameters is around 4,874. Because model parameters are typically constants during inferencing they are stored in the ROM of your device.
 
-Activations, on the other hand, may change through every inference cycle; thus, they are placed in RAM. For sequential model, a simple metric to estimate the RAM usage is by looking the combined size of the input and output of a layer at a given time.
+Activations on the other hand may change every inference cycle thus they are placed in RAM. For sequential model, a simple metric to estimate the RAM usage is by looking the combined size of the input and output of a layer at a given time.
 
 ## Conclusion
-Congratulation on completing this example. This tutorial covers quite a bit of information and is quite advanced. Stay tuned for more writings on TinyML to come. We will be bringing you content on not only the deployment of embedded ML models but also how to extend uTensor to do exactly what you want, such as node-fusion, adding operators, custom memory plans, data collection, etc.
+Congratulations on completing this example. This tutorial covers quite a bit of information and is quite advanced. Stay tuned for more writings on TinyML to come. We will be bringing you content on not only the deployment of embedded ML models but also how to extend uTensor to do exactly what you want, such as node-fusion, adding operators, custom memory plans, data collection, etc.
 
 Also, there are many ways you can help the project, for example:
 #### Star the Projects
