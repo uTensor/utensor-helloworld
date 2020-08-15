@@ -69,7 +69,7 @@ $ pipenv shell # to activate the environment
 
 
 ## Training and Code Generation
-The sample project should already include the generated model code and is ready to be compiled, however if you want to generate the input model directly check out [mnist_conv.ipynb](https://github.com/uTensor/utensor-helloworld/blob/re-arch-rc1/mnist_conv.ipynb) which contains the instructions for training this convolutional neural network. It can be easily modified to suit your need.
+The sample project should already include the generated model code and is ready to be compiled, however if you want to generate the input model directly check out [mnist_conv.ipynb](mnist_conv.ipynb) which contains the instructions for training this convolutional neural network. It can be easily modified to suit your need.
 
 You will need Jupyter-notebook and utensor-cli to be installed under the same Python virtual environment to run the code, from the project root:
 ```bash
