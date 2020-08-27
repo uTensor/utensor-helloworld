@@ -25,22 +25,23 @@ int argmax(const Tensor &logits) {
 
 static My_model model;
 
-int main(void) {
+int main(int argc, char **argv) {
+  printf("\n");
   printf("Simple MNIST end-to-end uTensor cli example (device)\n");
 
   // create the input/output tensor
-  Tensor input_image = new RomTensor({1, 28, 28, 1}, flt, arr_input_image);
-  Tensor logits = new RamTensor({1, 10}, flt);
+  for (size_t i = 0; i < 8; ++i) {
+    Tensor input_image = new RomTensor({1, 28, 28, 1}, flt, arr_input_image[i]);
+    Tensor logits = new RamTensor({1, 10}, flt);
 
-  model.set_inputs({{My_model::input_0, input_image}})
-      .set_outputs({{My_model::output_0, logits}})
-      .eval();
+    model.set_inputs({{My_model::input_0, input_image}})
+        .set_outputs({{My_model::output_0, logits}})
+        .eval();
+    int max_index = argmax(logits);
+    input_image.free();
+    logits.free();
 
-  int max_index = argmax(logits);
-  input_image.free();
-  logits.free();
-
-  printf("pred label: %d\r\n", max_index);
-
+    printf("pred label: %d, expecting: %d\r\n", max_index, ref_labels[i]);
+  }
   return 0;
 }
