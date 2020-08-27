@@ -23,7 +23,7 @@ int argmax(const Tensor &logits) {
   return max_index;
 }
 
-static My_model model;
+static MyModel model;
 
 int main(int argc, char **argv) {
   printf("\n");
@@ -35,8 +35,8 @@ int main(int argc, char **argv) {
     Tensor input_image = new RomTensor({1, 28, 28, 1}, flt, arr_input_image[i]);
     Tensor logits = new RamTensor({1, 10}, flt);
 
-    model.set_inputs({{My_model::input_0, input_image}})
-        .set_outputs({{My_model::output_0, logits}})
+    model.set_inputs({{MyModel::input_0, input_image}})
+        .set_outputs({{MyModel::output_0, logits}})
         .eval();
     int max_index = argmax(logits);
     input_image.free();
