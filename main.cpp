@@ -30,7 +30,8 @@ int main(int argc, char **argv) {
   printf("Simple MNIST end-to-end uTensor cli example (device)\n");
 
   // create the input/output tensor
-  for (size_t i = 0; i < 8; ++i) {
+  size_t num_samples = *(&ref_labels + 1) - ref_labels;
+  for (size_t i = 0; i < num_samples; ++i) {
     Tensor input_image = new RomTensor({1, 28, 28, 1}, flt, arr_input_image[i]);
     Tensor logits = new RamTensor({1, 10}, flt);
 
