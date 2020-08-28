@@ -125,11 +125,18 @@ tflm_keras_export(
 $ mbed deploy
 $ mbed compile -m auto -t GCC_ARM -f --sterm
 ```
-Expected output:
 
-```
+Expected output:
+```bash
 Simple MNIST end-to-end uTensor cli example (device)
-Predicted label: 7
+pred label: 8, expecting: 8
+pred label: 3, expecting: 3
+pred label: 5, expecting: 5
+pred label: 5, expecting: 5
+pred label: 1, expecting: 1
+pred label: 9, expecting: 9
+pred label: 3, expecting: 3
+pred label: 1, expecting: 1
 ```
 
 ## Join Us
